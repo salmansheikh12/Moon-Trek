@@ -35,7 +35,7 @@
     ```
     conda create --name MoonTrek
     conda activate MoonTrek
-    conda install python=3.7.9 django=3.1.7 numpy=1.20.1 opencv=3.4.2.17 pillow=8.1.2 pytz=2021.1 sqlparse=0.4.1
+    conda install python=3.7.9 django=3.1.7 numpy=1.20.1 opencv pillow=8.1.2 pytz=2021.1 sqlparse=0.4.1
     python -m pip install opencv-contrib-python==3.4.2.17
     ```
 
