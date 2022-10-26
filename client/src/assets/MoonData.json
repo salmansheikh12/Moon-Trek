@@ -1,0 +1,118 @@
+{
+    "oceanus": {
+        "Procellarum": {
+            "name": "Procellarum",
+            "latitude": 20.67,
+            "longitude": -56.67,
+            "description": "Oceanus Procellarum (Latin Ōceanus procellārum, the \"Ocean of Storms\") is a vast lunar mare on the western edge of the near side of the Moon. It is the only one of the lunar maria to be called an \"Oceanus\" (ocean), due to its size: Oceanus Procellarum is the largest of the maria, stretching more than 2,500 km (1,600 mi) across its north–south axis and covering roughly 4,000,000 km2 (1,500,000 sq mi), accounting for 10.5% of the total lunar surface area. Center Latitued: 20.671421 Center Longitude: -59.1037"
+        }
+    },
+    "crater": {
+        "Tycho": {
+            "name": "Tycho",
+            "latitude": -44,
+            "longitude": -212.5,
+            "description": ""
+        },
+        "Copernicus": {
+            "name": "Copernicus",
+            "latitude": -109,
+            "longitude": 55.5,
+            "description": ""
+        },
+        "Kepler": {
+            "name": "Kepler",
+            "latitude": -131,
+            "longitude": 12.5,
+            "description": ""
+        },
+        "Plato": {
+            "name": "Plato",
+            "latitude": -28,
+            "longitude": 249.5,
+            "description": ""
+        },
+        "Aristotles": {
+            "name": "Aristotles",
+            "latitude": 65,
+            "longitude": 233.5,
+            "description": ""
+        },
+        "Langrenus": {
+            "name": "Langrenus",
+            "latitude": 216,
+            "longitude": -53.5,
+            "description": ""
+        }
+    },
+    "maria": {
+        "Serenitatis": {
+            "name": "Serenitatis",
+            "latitude": 78,
+            "longitude": 127.5,
+            "description": "Mare Serenitatis (Latin serēnitātis, the \"Sea of Serenity\") is a lunar mare located to the east of Mare Imbrium on the Moon. Its diameter is 674 km (419 mi) Center Latitued: 27.2879. Center Longitude: 18.3596"
+        },
+        "Crisium": {
+            "name": "Crisium",
+            "latitude": 248,
+            "longitude": 77.5,
+            "description": "Mare Crisium (Latin crisium, the \"Sea of Crises)\" is a lunar mare located in the Moons Crisium basin, just northeast of Mare Tranquillitatis. The basin is of the Pre-Imbrian period, 4.55 to 3.85 billion years ago. Mare Crisium is 556 km (345 mi) in diameter, and 176,000 square kilometres (68,000 sq mi) in area. Center Latitued: 16.1774 Center Longitude: 59.1037."
+        },
+        "Tranquillitatis": {
+            "name": "Tranquillitatis",
+            "latitude": 122,
+            "longitude": 33.5,
+            "description": "Mare Tranquillitatis (Latin tranquillitātis, the Sea of Tranquillity or Sea of Tranquility; see spelling differences) is a lunar mare that sits within the Tranquillitatis basin on the Moon. Diametr 875.75 KM.Center Latitued: 8.35 Center Longitude:    30.83"
+        },
+        "Imbrium": {
+            "name": "Imbrium",
+            "latitude": -50,
+            "longitude": 159.5,
+            "description": "Mare Imbrium is a vast lava plain within the Imbrium Basin on the Moon and is one of the larger craters in the Solar System. The Imbrium Basin formed from the collision of a proto-planet during the Late Heavy Bombardment. Basaltic lava later flooded the giant crater to form the flat volcanic plain seen today."
+        },
+        "Nubium": {
+            "name": "Nubium",
+            "latitude": -74, 
+            "longitude": -98.5,
+            "description": "Mare Nubium (Latin nūbium, the \"sea of clouds\") is a lunar mare in the Nubium basin on the Moons near side. The mare is located just to the southeast of Oceanus Procellarum. Diametr 714.5 KM. Center Latitued:-20.589442 Center Longitude:    -17.287214"
+        },
+        "Frigoris": {
+            "name": "Frigoris",
+            "latitude": 6,
+            "longitude": 266.5,
+            "description": "Mare Frigoris (Latin frīgōris, the \"Sea of Cold\") is a lunar mare in the far north of the Moon. It is located in the outer rings of the Procellarum basin, just north of Mare Imbrium, and stretches east to north of Mare Serenitatis. It is just north of the dark crater Plato. Diametr 1446.41 KM. Center Latitued: 57.592307 Center Longitude: -0.006381"
+        }
+    },
+    "landingSite": {
+        "Apollo 11": {
+            "name": "Apollo 11",
+            "latitude": 92,
+            "longitude": 2.5,
+            "description": "This is the site where American astronauts Neil Armstrong and Edwin \"Buzz\" Aldrin made the first human landing on the Moon on July 20, 1969. Armstrong and Aldrin landed here aboard the lunar module Eagle, while Michael Collins remained in orbit around the Moon in the command module Columbia. Armstrong and Aldrin conducted one Extra-Vehicular Activity (EVA) or \"Moonwalk\" on the lunar surface lasting 2 hours, 31 minutes 40 seconds, remaining within 60 meters of the lunar module. They collected 21.55 kg of lunar sample material for return to the Earth. In this LRO NAC view of the landing site, the descent stage of the Eagle is the largest man-made object visible. The dark tracks of the astronauts’ footprints extend out from it clustered primarily in 3 directions. To the northwest, the tracks extend to the location where the astronauts set up a TV camera. To the south, tracks extend to where a Lunar Ranging Retroreflector and the Passive Seismic Experiment Package were deployed. To the east, the tracks extend to the rim of Little West Crater. The landing site is in the southwest part of Mare Tranquilitatis, an area characterized by extensive deposits of mare basalt lava rock."
+        },
+        "Apollo 12": {
+            "name": "Apollo 12",
+            "latitude": -92,
+            "longitude": -19.5,
+            "description": "This is the site where American astronauts Charles “Pete” Conrad and Alan Bean made the second human landing on the Moon on November 19, 1969. Conrad and Bean landed here aboard the lunar module Intrepid, while Richard Gordon remained in orbit around the Moon in the command module Yankee Clipper. Apollo 12 demonstrated the key capability of a precision landing, with Intrepid touching down less than 200 meters from the site where the Surveyor 3 probe had landed on April 20, 1967. Unlike Apollo 11, the mission plan deliberately targeted the landing site to be close to a number of impact craters. This nabled collection of samples from the subsurface that had been excavated by the formation of the craters. Conrad and Bean conducted 2 EVAs on the lunar surface. The first, lasting 3 hours, 56 minutes, extended to the northwest for deployment of the ALSEP instrument package, and the continued to the rim of a 350-meter diameter crater dubbed Middle Crescent. The second EVA, lasting 3 hours, 49 minutes, was a loop trip of 1.5 km around several craters to the south, including retrieval of a camera from Surveyor 3. They collected 34.35 kilograms of lunar sample material for return to the Earth. In this LRO NAC view of the landing site, the descent stage of the Intrepid is the largest man-made object visible. The dark tracks of the astronauts’ footprints extend out from it. To the northwest, the tracks extend about 130 meters to where components of the ALSEP can be seen. About 160 meters to the southeast of Intrepid, Surveyor 3 is visible with a dense cluster of footprints around it. The landing site, located at 3.01 S, 23.42 W, is in the southern part of Oceanus Procellarum, an area characterized by extensive deposits of basalt significantly younger than that at the Apollo 11 site. The site also provided the first samples of KREEP, material rich in potassium, phosphorus, and rare earth elements. The potential for sampling ejecta from one of the rays extending from the crater Copernicus added to the attractiveness of the site."
+        },
+        "Apollo 14": {
+            "name": "Apollo 14",
+            "latitude": -67, 
+            "longitude": -24.5,
+            "description": "This is the site where American astronauts Alan Shepard and Edgar Mitchell made the third human landing on the Moon on February 5, 1971. Shepard and Mitchell landed here aboard the lunar module Antares, while Stuart Roosa remained in orbit around the Moon in the command module Kitty Hawk. Shephard and Mitchell conducted 2 EVAs on the lunar surface. The first, lasting 4 hours, 47 minutes, 50 seconds, extended to the west for deployment of the ALSEP instrument package, included collection of a contingency sample, and covered a total distance of about 550 meters. The second EVA, lasting 4 hours, 34 minutes, 41 seconds, was intended to visit Cone Crater, 370 meters in diameter and located approximately 1.2 kilometers to the northeast. To help transport the load of equipment and retrieved samples on this EVA, the astronauts were equipped with a hand-pulled cart, the Modular Equipment Transporter (MET). The rough, hummocky terrain made navigation difficult during the second EVA, and the astronauts were not able to identify the rim of Cone Crater, though later imagery showed that they reached a point about 20 meters south of the crater rim. Shepard and Mitchell collected 42.80 kilograms of lunar sample material for return to the Earth. In this LRO NAC view of the landing site, the descent stage of the Antares is the largest man-made object visible. The dark tracks of the astronauts’ footprints from the first EVA extend to the west, where components of the ALSEP are visible. Extending to the northeast of Antares’ landing site, the track of the astronauts’ footprints and the tracks of the MET’s wheels can be traced toward Cone Crater. The landing site, located at 3.65 S, 17.47 W, was selected largely with the goal of sampling material from the Imbrium Basin impact, whose ejecta covers much of this area, known as the Fra Mauro formation."
+        },
+        "Apollo 15": {
+            "name": "Apollo 15",
+            "latitude": 19,
+            "longitude": 125.5,
+            "description": "This is the site where American astronauts David Scott and James Irwin made the fourth human landing on the Moon on July 30, 1971. Scott and Irwin landed here aboard the lunar module Falcon, while Alfred Worden remained in orbit around the Moon in the command module Endeavour. This was the first of the Apollo J missions. These featured a greater emphasis on conducting science on the Moon along with longer stays on the lunar surface. The J missions also included a lunar rover which allowed the astronauts to drive across the lunar surface, covering far greater areas, and carrying back more sample material. Scott first conducted a 33-minute stand-up EVA, surveying and imaging the local terrain through the upper hatch of the lunar module. Scott and Irwin then conducted 3 surface EVAs. The first, lasting 6 hours, 32 minutes, 42 seconds, involved deploying the Lunar Rover, and driving in it on a 10.3-km geological traverse. They drove southwest to the edge of Hadley Rille and then continued south along the edge of the rille. At the end of the first surface EVA, they deployed the Apollo Lunar Surface Experiments Package (ALSEP) approximately 110 meters north-northwest of the lunar module. The second surface EVA, lasting 7 hours, 12 minutes, 14 seconds, featured a 12.5-kilometer lunar rover traverse southeast across the mare and along the base of the Apennine Mountains. The third surface EVA, lasting 4 hours, 49 minutes, 50 seconds, had the astronauts making a 5.1-kilometer traverse west to Hadley Rille northwest along the edge of the rille, and east across the mare back to the lunar module. Scott and Irwin collected 77 kilograms of lunar sample material for return to the Earth. In this LRO NAC view of the landing site, the descent stage of the Falcon is the largest man-made object visible. The dark markings of the astronauts’ footprints and rover tire tracks are visible around the landing site, especially extending to the north-northwest, where components of the ALSEP are visible. The landing site, located at 26.13 N, 3.63 E, was selected to provide access to the basalt of Mare Imbrium, the stratigraphy revealed in the deep channel of Hadley Rille carved by flowing lava, and mountain material from the front of the Apennine Range. Acknowledgements to LPI’s Apollo Surface Operations descriptions and NASA’s Apollo Surface Journal."
+        },
+        "Apollo 16": {
+            "name": "Apollo 16",
+            "latitude": 68,
+            "longitude": -48.5,
+            "description": "This is the site where American astronauts John Young and Charles Duke made the fifth human landing on the Moon on April 21, 1972. Young and Duke landed here aboard the lunar module Orion, while Ken Mattingly remained in orbit around the Moon in the command module Casper. Young and Duke conducted 3 surface EVAs. The first, lasting 7 hours, 11 minutes, 2 seconds, included deploying the Apollo Lunar Surface Experiments Package (ALSEP) approximately 95 meters southwest of the lunar module, and conducting a geologic traverse using the lunar rover to a couple of small craters within about 1,400 meters to the west of the landing site. The second surface EVA, lasting 7 hours, 23 minutes, 9 seconds, featured an 11.1-kilometer lunar rover drive south to the Cinco Crater area of Stone Mountain, making stops at 5 stations along the way. The third surface EVA, lasting 5 hours, 40 minutes, 3 seconds, had the astronauts making a 11.4-kilometer traverse north to North Ray Crater. Young and Duke collected 95.71 kilograms of lunar sample material for return to the Earth. In this LRO NAC view of the landing site, the descent stage of the Orion is the largest man-made object visible, within a dark halo on the western rim of a ~30-meter crater. The dark markings of the astronauts’ footprints and rover tire tracks are visible around the landing site, especially extending to the southwest, where components of the ALSEP are visible. With the previous Apollo landings having focused on the low, flat, basaltic terrain of the lunar maria or seas, Apollo 16 was the first crewed mission to visit the lunar highlands. The landing site, located at 8.97 S, 15.50 E, was located on the boundary of two highland geologic units, the Descartes Formation and the Cayley Formation. Both units were thought to be volcanic in nature, but composed of lavas with higher silica content than the basaltic rocks of the maria; the Descartes Formation was widely thought to be rhyolite. However, the astronauts quickly discovered on their traverses that the rocks around them were overwhelmingly breccias. The great surprise of Apollo 16 was the discovery that the highland terrain was not silicic lava, but fluidized ejecta from a great basin- forming impact, and that the rocks were crustal material, largely anorthosite and gabbro. Acknowledgements to LPI’s Apollo Surface Operations descriptions and NASA’s Apollo Surface Journal."
+        }
+    }
+}
