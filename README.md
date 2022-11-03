@@ -28,8 +28,8 @@
 
 ![diagram](diagram.png)
 
-## Install:
-1. Download [NodeJs](https://nodejs.org/en/download/) and [Anaconda](https://www.anaconda.com/). Make sure to add conda to your path when installing on Windows (it will ask). If you already installed Anaconda and didn't add it to your path, follow [these instructions](https://stackoverflow.com/questions/44597662/conda-command-is-not-recognized-on-windows-10)
+## Install ([video](https://www.youtube.com/watch?v=qeVeNWcuBx4)):
+1. Download [NodeJs](https://nodejs.org/en/download/) and [Anaconda](https://www.anaconda.com/). Make sure to add conda to your path when installing on Windows (it will ask). If you already installed Anaconda and didn't add it to your path, follow [these instructions](https://www.youtube.com/watch?v=9ol-kyJXmnU)
 
 2. Set up MoonTrek anaconda environment. In your terminal, run the following commands:
     ```
