@@ -32,8 +32,8 @@
                 const ctx = document.getElementById("canvas").getContext("2d");
 
                 // Clear any other points
-                ctx.reset();
-                
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
                 // Set color to red
                 ctx.fillStyle = "red";
 
@@ -87,7 +87,7 @@
 
                 // Plot specific point in cyan
                 this.colorSpecificPoint(pointType, pointName);
-                
+
                 // Update to selected point name
                 this.pointName = pointName;
 
@@ -102,7 +102,7 @@
                 let pairs = [];
 
                 // Loop through the names array two at a time
-                for(let i = 0; i < pointNames.length - 1; i += 2) {
+                for (let i = 0; i < pointNames.length - 1; i += 2) {
                     // Enter pairs of point names into the pairs array
                     pairs.push([pointNames[i], pointNames[i + 1]]);
                 }
@@ -137,10 +137,10 @@
                     </p>
                     <div v-for="pair in getPointPairs('crater')" :key="pair.id">
                         <a id="point-selection" @click="displayPointInfo('crater', pair[0])">
-                            {{  pair[0] }}
+                            {{ pair[0] }}
                         </a>
                         <a id="point-selection" @click="displayPointInfo('crater', pair[1])">
-                            {{  pair[1] }}
+                            {{ pair[1] }}
                         </a>
                     </div>
                 </div>
@@ -150,10 +150,10 @@
                     </p>
                     <div v-for="pair in getPointPairs('maria')" :key="pair.id">
                         <a id="point-selection" @click="displayPointInfo('maria', pair[0])">
-                            {{  pair[0] }}
+                            {{ pair[0] }}
                         </a>
                         <a id="point-selection" @click="displayPointInfo('maria', pair[1])">
-                            {{  pair[1] }}
+                            {{ pair[1] }}
                         </a>
                     </div>
                 </div>
@@ -163,10 +163,10 @@
                     </p>
                     <div v-for="pair in getPointPairs('landingSite')" :key="pair.id">
                         <a id="point-selection" @click="displayPointInfo('landingSite', pair[0])">
-                            {{  pair[0] }}
+                            {{ pair[0] }}
                         </a>
                         <a id="point-selection" @click="displayPointInfo('landingSite', pair[1])">
-                            {{  pair[1] }}
+                            {{ pair[1] }}
                         </a>
                     </div>
                 </div>
