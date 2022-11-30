@@ -1,3 +1,19 @@
+<script>
+    export default {
+        name: 'NavBar',
+        data() {
+            return {
+                isActive: false
+            }
+        },
+        methods: {
+            navClicked() {
+                this.isActive = !this.isActive;
+            }
+        }
+    }
+</script>
+
 <template>
     <nav class="navbar is-transparent" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
@@ -8,22 +24,20 @@
                 </div>
                 <p>Moon Trek Telescope</p>
             </router-link>
-            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbar">
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbar" @click="navClicked">
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
             </a>
         </div>
 
-        <div id="navbar" class="navbar-menu">
+        <div id="navbar" class="navbar-menu" :class="{ 'is-active': isActive }">
             <div class="navbar-end">
-                <div class="navbar-item">
-                    <router-link class="navbar-item" to="/">Home</router-link>
-                    <router-link class="navbar-item" to="/upload">Upload</router-link>
-                    <router-link class="navbar-item" to="/connect">Connect</router-link>
-                    <router-link class="navbar-item" to="/model">3D Model</router-link>
-                    <router-link class="navbar-item" to="/about">About</router-link>
-                </div>
+                <router-link class="navbar-item" to="/">Home</router-link>
+                <router-link class="navbar-item" to="/upload">Upload</router-link>
+                <router-link class="navbar-item" to="/connect">Connect</router-link>
+                <router-link class="navbar-item" to="/model">3D Model</router-link>
+                <router-link class="navbar-item" to="/about">About</router-link>
             </div>
         </div>
     </nav>
@@ -37,8 +51,10 @@
         margin-bottom: 6rem;
     }
 
-    .icons {
-        margin-right: .6rem;
+    .navbar-menu {
+        background: rgba(0, 0, 0, 0);
+        position: absolute;
+        right: 1rem;
     }
 
     .navbar-item {
