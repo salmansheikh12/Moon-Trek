@@ -1,13 +1,15 @@
 <script>
     import ImageUploadForm from '../components/ImageUploadForm.vue'
+    import AnimatedStars from '../components/AnimatedStars.vue'
 
     export default {
         name: 'UploadPage',
-        components: { ImageUploadForm }
+        components: { ImageUploadForm, AnimatedStars }
     }
 </script>
 
 <template>
+    <AnimatedStars />
     <ImageUploadForm />
 
     <div id="instructions">

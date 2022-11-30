@@ -1,13 +1,15 @@
 <script>
     import BasicMoon from '../components/BasicMoon.vue';
+    import AnimatedStars from '../components/AnimatedStars.vue'
 
     export default {
         name: 'HomePage',
-        components: { BasicMoon }
+        components: { BasicMoon, AnimatedStars }
     }
 </script>
 
 <template>
+    <AnimatedStars />
     <div id="home">
         <div class="columns is-centered">
             <div class="column is-two-thirds is-mobile">

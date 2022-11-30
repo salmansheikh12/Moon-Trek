@@ -1,10 +1,11 @@
 <script>
     import { useCookies } from 'vue3-cookies';
     import ImageCanvas from '../components/ImageCanvas.vue';
+    import AnimatedStars from '../components/AnimatedStars.vue'
 
     export default {
         name: 'ConnectPage',
-        components: { ImageCanvas },
+        components: { ImageCanvas, AnimatedStars },
         setup() {
             const { cookies } = useCookies();
             return { cookies };
@@ -43,6 +44,7 @@
 </script>
 
 <template>
+    <AnimatedStars />
     <div id="connect">
         <div v-if="!fileName">
             <div class="columns is-centered">
