@@ -11,12 +11,14 @@
         },
         methods: {
             RenderMoon() {
+                const canvas = document.getElementById("moon-canvas");
+
                 // Instantiate renderer
                 const renderer = new THREE.WebGLRenderer({ alpha: true });
 
-                // Set render size and assign the html element (by id) to render over
+                // Set render size and append it to the canvas
                 renderer.setSize(1050, 450);
-                document.getElementById("moon-rotation").appendChild(renderer.domElement);
+                canvas.appendChild(renderer.domElement);
 
                 // Instantiate the scene and camera
                 const scene = new THREE.Scene();
@@ -52,6 +54,15 @@
                 const animate = () => {
                     requestAnimationFrame(animate);
 
+                    const width = canvas.clientWidth;
+                    const height = canvas.clientHeight;
+
+                    if (canvas.width !== width || canvas.height !== height) {
+                        renderer.setSize(width, height);
+                        camera.aspect = width / height;
+                        camera.updateProjectionMatrix();
+                    }
+
                     moon.rotation.y += 0.005;
 
                     renderer.render(scene, camera);
@@ -68,14 +79,14 @@
 
 <template>
     <div class="columns is-centered">
-        <div id="moon-rotation">
+        <div id="moon-canvas">
 
         </div>
     </div>
 </template>
 
 <style>
-    #moon-rotation {
+    #moon-canvas {
         z-index: 7;
     }
 </style>

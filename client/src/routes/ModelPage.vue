@@ -50,16 +50,18 @@
                 // Get position information for the earth and sun
                 const positions = await this.getPositions();
 
+                const canvas = document.getElementById("model-canvas");
+
                 // Instantiate renderer
                 const renderer = new THREE.WebGLRenderer({ alpha: true });
 
-                // Set render size and assign the html element (by id) to render over
+                // Set render size and append it to the canvas
                 renderer.setSize(1600, 800);
-                document.getElementById("model-canvas").appendChild(renderer.domElement);
+                canvas.appendChild(renderer.domElement);
 
                 // Instantiate the scene, camera, and orbit controls
                 const scene = new THREE.Scene();
-                const camera = new THREE.PerspectiveCamera(65, 1600 / 800, 0.01, 1000000);
+                const camera = new THREE.PerspectiveCamera(65, 2, 0.01, 1000000);
                 const orbit = new OrbitControls(camera, renderer.domElement);
 
                 // Set the camera position and update orbit controls
@@ -136,18 +138,19 @@
 
                 // Animate the scene
                 const animate = () => {
+                    const width = canvas.clientWidth;
+                    const height = canvas.clientHeight;
+
+                    if (canvas.width !== width || canvas.height !== height) {
+                        renderer.setSize(width, height);
+                        camera.aspect = width / height;
+                        camera.updateProjectionMatrix();
+                    }
+
                     //Self-rotation
                     renderer.render(scene, camera);
                 }
                 renderer.setAnimationLoop(animate);
-
-                // This is to resize the scene if the window is resized
-                // TEMP: the scene size is currently set to a static value for testing
-                window.addEventListener("resize", function () {
-                    camera.aspect = 1600 / 800;
-                    camera.updateProjectionMatrix();
-                    renderer.setSize(1600, 800);
-                });
             }
         },
         mounted() {
@@ -158,7 +161,7 @@
 </script>
 
 <template>
-    <div id="model" class="columns is-centered">
+    <div class="columns is-centered">
         <div id="model-canvas">
         </div>
     </div>
