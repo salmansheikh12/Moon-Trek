@@ -1,15 +1,13 @@
 <script>
-    import BasicMoon from '../components/BasicMoon.vue';
-    import AnimatedStars from '../components/AnimatedStars.vue'
+import BasicMoon from '../components/BasicMoon.vue';
 
-    export default {
-        name: 'HomePage',
-        components: { BasicMoon, AnimatedStars }
-    }
+export default {
+    name: 'HomePage',
+    components: { BasicMoon }
+}
 </script>
 
 <template>
-    <AnimatedStars />
     <div id="home">
         <div class="columns is-centered">
             <div class="column is-two-thirds is-mobile">
@@ -35,26 +33,46 @@
 </template>
 
 <style>
+#home h1 {
+    background: -webkit-linear-gradient(#d9ecff, #2E3440 80%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 8rem;
+    font-weight: bold;
+    line-height: 7rem;
+    text-transform: uppercase;
+    margin-bottom: -6.5rem;
+}
+
+#home h2 {
+    font-size: 1.6rem;
+    margin-top: -4rem;
+}
+
+#get-started {
+    background-image: linear-gradient(to right, #88C0D0, #B48EAD);
+    color: #d9ecff;
+    font-size: 1.4rem;
+    padding: .6rem;
+}
+
+@media (min-width: 180px) and (max-width: 1200px) {
     #home h1 {
-        background: -webkit-linear-gradient(#d9ecff, #2E3440 80%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        font-size: 8rem;
-        font-weight: bold;
-        line-height: 7rem;
-        text-transform: uppercase;
-        margin-bottom: -6.5rem;
+        font-size: 4.5rem;
+        line-height: 4rem;
+        margin-bottom: -5.5rem;
     }
 
     #home h2 {
-        font-size: 1.6rem;
+        font-size: 1.4rem;
         margin-top: -4rem;
+        padding-left: .4rem;
+        padding-right: .4rem;
     }
 
     #get-started {
-        background-image: linear-gradient(to right, #88C0D0, #B48EAD);
-        color: #d9ecff;
-        font-size: 1.4rem;
-        padding: .6rem;
+        font-size: 1.2rem;
+        padding: .4rem;
     }
+}
 </style>
