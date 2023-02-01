@@ -1,7 +1,12 @@
 const express = require('express');
+const expressWs = require('express-ws');
+
 const app = express();
 const port = 8888;
 const config = require('./config.json');
+expressWs(app);
+
+const fs = require('fs');
 
 // Super agent is used to make http requests
 // Use:
@@ -56,6 +61,7 @@ app.post('/upload', upload.single('image'), async (req, res) => {
     try {
         // Get the image object sent with the request
         const image = req.file;
+        const refImage = req.cookies.get("ref-img");
 
         // Set up the command to call the python file, which performs image
         // registration given the file name as an argument, within the proper
@@ -64,7 +70,7 @@ app.post('/upload', upload.single('image'), async (req, res) => {
         // images/processed: one image which shows the commonalities found
         // during registration and the other is a cropped/resized version
         // of the original
-        const cmd = `conda run -n MoonTrek python image-registration/process.py ${ image.filename }`;
+        const cmd = `conda run -n MoonTrek python image-registration/process.py ${ image.filename } ${ refImage }`;
 
         // Execute the command
         spawn(cmd, { shell: true });
@@ -160,6 +166,21 @@ app.get('/positions', async (req, res) => {
             error
         });
     }
+});
+
+// Get the /ws websocket route
+app.ws('/ws', async function(ws, req) {
+    ws.on('message', async function(msg) {
+        fs.writeFile('test.ppm', msg, err => {
+            if (err) {
+              console.error(err);
+            }
+            // file written successfully
+            console.log("Written successfully");
+          });        
+        ws.send(JSON.stringify({ "message" : "success" }));
+        // Start listening for messages
+    });
 });
 
 // Start server

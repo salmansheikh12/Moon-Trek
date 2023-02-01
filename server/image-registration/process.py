@@ -3,6 +3,11 @@ import sys
 import cv2
 import numpy as np
 
+def writePPM(file):
+    f = open("images/reference/reference.ppm", "w")
+    f.write(file)
+    f.close()
+
 def processUserImage(filename):
     ######################### Circle Detection #########################
 
@@ -217,4 +222,5 @@ def processUserImage(filename):
     # return roots
 
 if __name__ == "__main__":
+    
     processUserImage(sys.argv[1])

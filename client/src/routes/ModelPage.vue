@@ -3,6 +3,33 @@
     import * as THREE from 'three';
     import { useCookies } from 'vue3-cookies';
     import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+    import { Buffer } from 'buffer';
+
+    // Strips pixel raster of alpha component
+    // Data must be in RGBA format
+    function RGBAToRGB(data) {
+        var out = new Uint8Array(data.length * 3 / 4);
+        for(var i = 0; i<data.length; i++) {
+            if(i+1 % 4 != 0) {
+                out[i - Math.floor(i/4)] = data[i];
+            }
+        }
+        return out;
+    }
+
+    // Converts raster data into PPM image format
+    // Data must be RGB Uint8Array of length width * height * 3
+    function formatPPM(data, width, height, maxVal) {
+        var out = "";
+        out = out.concat('P3\n', width, ' ', height, '\n', maxVal, '\n');
+        for(var i = 0; i<data.length; i++) {
+            out = out.concat(data[i], ' ');
+            if (i != 0 && i % width*3 == 0) {
+                out = out.concat('\n');
+            }
+        }
+        return out;
+    }
 
     export default {
         name: "ModelPage",
@@ -45,6 +72,11 @@
                 // Return the position information
                 return response.data;
             },
+            sendMessage: function(message) {
+                console.log("Hello")
+                console.log(this.connection);
+                this.connection.send(message);
+            },
             // This method renders and animates the ThreeJs model
             async renderModel() {
                 // Get position information for the earth and sun
@@ -52,12 +84,26 @@
 
                 const canvas = document.getElementById("model-canvas");
 
+                // Initialize flag to capture raster on mouse click
+                var getRenderedPixels = false;
+                function setAwaitFlag() { 
+                    getRenderedPixels = true;
+                }
+
+                document.getElementById("model-canvas").addEventListener("click", setAwaitFlag);
+
                 // Instantiate renderer
                 const renderer = new THREE.WebGLRenderer({ alpha: true });
 
+                const render_width = 1600;
+                const render_height = 800;
+
                 // Set render size and append it to the canvas
-                renderer.setSize(1600, 800);
+                renderer.setSize(render_width, render_height);
                 canvas.appendChild(renderer.domElement);
+
+                // Initialize secondary render target
+                const renderTarget = new THREE.WebGLRenderTarget(render_width, render_height);
 
                 // Instantiate the scene, camera, and orbit controls
                 const scene = new THREE.Scene();
@@ -148,15 +194,64 @@
                     }
 
                     //Self-rotation
-                    renderer.render(scene, camera);
+                    
+                    // Flag is triggered when the user clicks the screen
+                    if (getRenderedPixels) {
+            
+                        // Renders to secondary target instead of canvas
+                        renderer.setRenderTarget(renderTarget);
+                        renderer.render(scene, camera);
+
+                        // Reads RGBA values into buffer
+                        var buffer = new Buffer(render_width * render_height * 4);
+                        renderer.readRenderTargetPixels(renderTarget, 0, 0, render_width, render_height, buffer);
+
+                        // Removes alpha values
+                        var bufferRGB = RGBAToRGB(buffer);
+
+                        // Formats RGB values into PPM image format
+                        var ppmFile = formatPPM(bufferRGB, render_width, render_height, 255);
+                                                
+                        console.log(ppmFile);
+
+                        this.sendMessage(ppmFile);
+                        
+                        // Deactivates flag so model will render as normal
+                        getRenderedPixels = false;
+
+                    } else {
+                        renderer.render(scene, camera);
+                    }
+
                 }
                 renderer.setAnimationLoop(animate);
+                
             }
+            
         },
         mounted() {
             // When the page is loaded, this code will run
             this.renderModel();
         },
+        created: function() {
+            console.log("Starting connection to WebSocket Server");
+
+            const socketProtocol = (window.location.protocol === 'https:' ? 'wss:' : 'ws:');
+            const port = ':8888';
+            const echoSocketUrl = socketProtocol + '//' + window.location.hostname + port + '/ws';
+
+            this.connection = new WebSocket(echoSocketUrl);
+
+            this.connection.onmessage = function(event) {
+            console.log(event);
+            }
+
+            this.connection.onopen = function(event) {
+            console.log(event)
+            console.log("Successfully connected to the echo websocket server...")
+            }
+
+        }
     }
 </script>
 
@@ -164,6 +259,7 @@
     <div class="columns is-centered">
         <div id="model-canvas">
         </div>
+        <p id="sanity-check"></p>
     </div>
 </template>
 
