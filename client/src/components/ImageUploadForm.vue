@@ -2,6 +2,8 @@
 import axios from 'axios';
 import { useCookies } from 'vue3-cookies';
 import { EXIF } from 'exif-js';
+import { ZonedDateTime, ZoneId } from '@js-joda/core';
+import '@js-joda/timezone';
 
 export default {
     name: 'ImageUploadForm',
@@ -87,16 +89,10 @@ export default {
         // manually entered by the user
         async onSubmit() {
             try {
-                // Set up form data will be sent with the request to
+                // Set up form data which will be sent with the request to
                 // the 'upload' express endpoint
                 const formData = new FormData();
                 formData.append('image', this.image);
-
-                // If there's manually entered date and time data, adjust
-                // the time stamp to that entered data
-                if (this.date !== '' && this.time !== '') {
-                    this.timeStamp = `${this.date}T${this.time}:00`;
-                }
 
                 // Make request to 'upload' endpoint with form data containing the image
                 // and location data which are sent as query parameters
@@ -104,20 +100,43 @@ export default {
                     params: {
                         latitude: this.latitude,
                         longitude: this.longitude,
-                        altitude: this.altitude,
-                        timeStamp: this.timeStamp
                     }
                 });
 
-                // Update message to response status
-                this.message = res.data.status;
+                const { status, fileName, timeZone } = res.data;
 
-                // Pull UTC time info from the response
-                const { year, month, day, hour, minute, second } = res.data.timeStampInfo;
+                // Update message to response status
+                this.message = status;
+
+                // If there's manually entered date and time data, adjust
+                // the time stamp to that entered data
+                if (this.date !== '' && this.time !== '') {
+                    this.timeStamp = `${this.date}T${this.time}:00`;
+                }
+
+                // Split time stamp string into an array
+                const splitStamp = this.timeStamp.split(/\D/);
+
+                const localStamp = new ZonedDateTime.of(
+                    splitStamp[0], // year
+                    splitStamp[1], // month
+                    splitStamp[2], // day
+                    splitStamp[3], // hour
+                    splitStamp[4], // minute
+                    splitStamp[5], // second
+                    0,             // millisecond
+                    ZoneId.of(timeZone)
+                );
+
+                const utcStamp = localStamp.withZoneSameInstant(ZoneId.of('UTC'));
+
+                // console.log(this.timeStamp, timeZone);
+                // console.log(`${localStamp.year()}-${localStamp.monthValue()}-${localStamp.dayOfMonth()}T${localStamp.hour()}:${localStamp.minute()}:${localStamp.second()}`);
+                // console.log(`${utcStamp.year()}-${utcStamp.monthValue()}-${utcStamp.dayOfMonth()}T${utcStamp.hour()}:${utcStamp.minute()}:${utcStamp.second()}`);
 
                 // Store file name, UTC time stamp, and geolocation data in cookies
-                this.cookies.set("fileName", res.data.fileName);
-                this.cookies.set("timeStamp", `${year}-${month}-${day}T${hour}:${minute}:${second}`);
+                this.cookies.set("fileName", fileName);
+                this.cookies.set("timeStamp", `${utcStamp.year()}-${utcStamp.monthValue()}-${utcStamp.dayOfMonth()}T${utcStamp.hour()}:${utcStamp.minute()}:${utcStamp.second()}`);
                 this.cookies.set("longitude", this.longitude);
                 this.cookies.set("latitude", this.latitude);
                 this.cookies.set("altitude", this.altitude);
