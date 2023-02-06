@@ -1,7 +1,12 @@
 const express = require('express');
+const expressWs = require('express-ws');
+
 const app = express();
 const port = 8888;
 const config = require('./config.json');
+expressWs(app);
+
+const fs = require('fs');
 
 // Super agent is used to make http requests
 // Use:
@@ -130,6 +135,21 @@ app.get('/positions', async (req, res) => {
             error
         });
     }
+});
+
+// Get the /ws websocket route
+app.ws('/ws', async function(ws, req) {
+    ws.on('message', async function(msg) {
+        fs.writeFile('test.ppm', msg, err => {
+            if (err) {
+              console.error(err);
+            }
+            // file written successfully
+            console.log("Written successfully");
+          });        
+        ws.send(JSON.stringify({ "message" : "success" }));
+        // Start listening for messages
+    });
 });
 
 // Start server

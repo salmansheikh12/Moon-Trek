@@ -27,7 +27,7 @@ export default {
             light.position.set(-50, 0, 50);
             this.scene.add(light);
 
-            this.gltfLoader.load('http://localhost:8888/image/Moon.glb', (gltf) => {
+            this.gltfLoader.load('http://localhost:8888/model/Moon.glb', (gltf) => {
                 this.moon = gltf.scene;
                 this.moon.scale.set(1 / 850, 1 / 850, 1 / 850);
                 this.scene.add(this.moon);
