@@ -92,7 +92,7 @@ export default {
             earth.position.x = 0;
             earth.position.y = 0;
             earth.position.z = 0;
-            // earth.rotateY(this.positions.earth.rotation_angle * (3.14 / 180));
+            earth.rotateY(this.positions.earth.rotation_angle * (3.14 / 180));
             this.scene.add(earth);
 
             const personGeo = new THREE.SphereGeometry(.05);
@@ -122,7 +122,7 @@ export default {
             moon.position.x = this.positions.moon.x / 1000;
             moon.position.y = this.positions.moon.z / 1000;
             moon.position.z = this.positions.moon.y / 1000;
-            // moon.rotateY(-1 * (180 - this.positions.moon.rotation_angle) * (3.14 / 180));
+            moon.rotateY(-1 * (180 - this.positions.moon.rotation_angle) * (3.14 / 180));
             this.scene.add(moon);
 
             const light = new THREE.PointLight(0xffffff, 2.5, 1000000);
