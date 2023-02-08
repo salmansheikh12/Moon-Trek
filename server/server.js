@@ -8,10 +8,10 @@ expressWs(app);
 
 const fs = require('fs');
 
-// Super agent is used to make http requests
+// Axios is used to make http requests
 // Use:
 //      To get info from JPL's servers
-const superagent = require('superagent');
+const axios = require('axios');
 
 // Spawn is used to create separate processes
 // Use:
@@ -102,31 +102,33 @@ app.use('/model', express.static('models'));
 // given a time stamp (expected in UTC)
 app.get('/positions', async (req, res) => {
     try {
-        // Get the time stamp that was sent with the request as a query parameter
         const { latitude, longitude, timeStamp } = req.query;
 
-        // Search for position information using the given time stamp
-        const personPositionSearch = await superagent.get(
-            `http://${ config.dataServer.ip }:${ config.dataServer.port }/lat-to-rect/earth/earth/${ longitude }/${ latitude }/${ timeStamp }`
+        const earthRotationSearch = await axios.get(
+            `http://${ config.dataServer.ip }:${ config.dataServer.port }/target-rotation/moon/earth/${ timeStamp }`
         );
-        const earthSearch = await superagent.get(
-            `http://${ config.dataServer.ip }:${ config.dataServer.port }/planet-vector-search/moon/earth/${ timeStamp }`
+        const personPositionSearch = await axios.get(
+            `http://${ config.dataServer.ip }:${ config.dataServer.port }/lat-to-rect/earth/earth/${ -1 * longitude }/${ latitude }/${ timeStamp }`
         );
-        const sunSearch = await superagent.get(
-            `http://${ config.dataServer.ip }:${ config.dataServer.port }/planet-vector-search/moon/sun/${ timeStamp }`
+        const moonPositionSearch = await axios.get(
+            `http://${ config.dataServer.ip }:${ config.dataServer.port }/planet-vector-search/earth/moon/${ timeStamp }`
         );
-        const moonSearch = await superagent.get(
+        const moonRotationSearch = await axios.get(
             `http://${ config.dataServer.ip }:${ config.dataServer.port }/target-rotation/earth/moon/${ timeStamp }`
         );
+        const sunPositionSearch = await axios.get(
+            `http://${ config.dataServer.ip }:${ config.dataServer.port }/planet-vector-search/earth/sun/${ timeStamp }`
+        );
 
-        // Parse the search data for specifically the position information
-        const person = JSON.parse(personPositionSearch.text).positions.earth;
-        const earth = JSON.parse(earthSearch.text).positions.earth;
-        const sun = JSON.parse(sunSearch.text).positions.sun;
-        const moon = JSON.parse(moonSearch.text);
-
-        // Respond with the position information
-        res.status(200).json({ person, earth, sun, moon });
+        res.status(200).json({
+            "earth": earthRotationSearch.data,
+            "person": personPositionSearch.data.positions.earth,
+            "moon": {
+                ...moonPositionSearch.data.positions.moon,
+                ...moonRotationSearch.data
+            },
+            "sun": sunPositionSearch.data.positions.sun
+        });
     } catch(error) {
         // If there's any errors, respond with an error message and the actual
         // error itself
