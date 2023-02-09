@@ -1,17 +1,17 @@
 <script>
-    export default {
-        name: 'NavBar',
-        data() {
-            return {
-                isActive: false
-            }
-        },
-        methods: {
-            navClicked() {
-                this.isActive = !this.isActive;
-            }
+export default {
+    name: 'NavBar',
+    data() {
+        return {
+            isActive: false
+        }
+    },
+    methods: {
+        navClicked() {
+            this.isActive = !this.isActive;
         }
     }
+}
 </script>
 
 <template>
@@ -19,12 +19,14 @@
         <div class="navbar-brand">
             <router-link class="navbar-item" to="/">
                 <div class="icons">
-                    <img src="https://logos-world.net/wp-content/uploads/2020/05/NASA-Logo-1959-present.png"/>
-                    <img src="https://www.freelogovectors.net/svg09/california-state-university-los-angeles-logo-freelogovectors.net_.svg"/>
+                    <img src="https://logos-world.net/wp-content/uploads/2020/05/NASA-Logo-1959-present.png" />
+                    <img
+                        src="https://www.freelogovectors.net/svg09/california-state-university-los-angeles-logo-freelogovectors.net_.svg" />
                 </div>
                 <p>Moon Trek Telescope</p>
             </router-link>
-            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbar" @click="navClicked">
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbar"
+                @click="navClicked">
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
@@ -44,28 +46,32 @@
 </template>
 
 <style>
-    .navbar {
-        background: rgba(0, 0, 0, 0);
-        height: 2rem;
-        margin-top: -2rem;
-        margin-bottom: 6rem;
-    }
+.icons {
+    padding-right: .75rem;
+}
 
-    .navbar-menu {
-        background: rgba(0, 0, 0, 0);
-        position: absolute;
-        right: 1rem;
-    }
+.navbar {
+    background: rgba(0, 0, 0, 0);
+    height: 2rem;
+    margin-top: -2rem;
+    margin-bottom: 6rem;
+}
 
-    .navbar-item {
-        color: #d9ecff;
-        font-family: 'Nunito';
-        font-size: 1.2rem;
-        margin-left: .4rem;
-        margin-right: .4rem;
-    }
+.navbar-menu {
+    background: #090a0f;
+    position: absolute;
+    right: 1rem;
+}
 
-    .navbar-item:hover {
-        color: #81A1C1;
-    }
+.navbar-item {
+    color: #d9ecff;
+    font-family: 'Nunito';
+    font-size: 1.2rem;
+    margin-left: .4rem;
+    margin-right: .4rem;
+}
+
+.navbar-item:hover {
+    color: #81A1C1;
+}
 </style>

@@ -1,12 +1,17 @@
 const express = require('express');
+const expressWs = require('express-ws');
+
 const app = express();
 const port = 8888;
 const config = require('./config.json');
+expressWs(app);
 
-// Super agent is used to make http requests
+const fs = require('fs');
+
+// Axios is used to make http requests
 // Use:
 //      To get info from JPL's servers
-const superagent = require('superagent');
+const axios = require('axios');
 
 // Spawn is used to create separate processes
 // Use:
@@ -70,53 +75,15 @@ app.post('/upload', upload.single('image'), async (req, res) => {
         spawn(cmd, { shell: true });
 
         // Get the location data sent with the request as query parameters
-        const { latitude, longitude, altitude, timeStamp } = req.query;
-
-        // Store the current time zone
-        const originalTZ = process.env.TZ;
-
-        // Find the timezone of the uploader and temporarily set the system
-        // timezone to the one we just found
-        process.env.TZ = find(latitude, longitude)[0];
-
-        // Split the time stamp at any non-digit character and store the rest
-        // into an array
-        // Ex:
-        //     Splitting on the character '\D' for the string:
-        //          '2022-10-18T10:59:30'
-        //     would return the array:
-        //          ['2022', '10', '18', '10', '59', '30']
-        const splitStamp = timeStamp.split(/\D/);
-
-        // Create a date object with the data that was just split
-        const newStamp = new Date(
-            splitStamp[0],
-            splitStamp[1],
-            splitStamp[2],
-            splitStamp[3],
-            splitStamp[4],
-            splitStamp[5]
-        );
-
-        // Create an object to store all the date info in UTC
-        const newStampInfo = {
-            year: newStamp.getUTCFullYear(),
-            month: newStamp.getUTCMonth(),
-            day: newStamp.getUTCDate(),
-            hour: newStamp.getUTCHours(),
-            minute: newStamp.getUTCMinutes(),
-            second: newStamp.getUTCSeconds()
-        };
-
-        // Switch system timezone back to the original timezone
-        process.env.TZ = originalTZ;
-
+        const { latitude, longitude } = req.query;
+        const timeZone = find(latitude, longitude)[0];
+        
         // Respond with a success message, the name we saved the uploaded
         // image as, and the object containing the UTC date info
         res.status(200).json({
             status: 'Upload successful',
             fileName: image.filename,
-            timeStampInfo: newStampInfo
+            timeZone
         });
     } catch (error) {
         // If there's any errors, respond with an error message and the actual
@@ -128,30 +95,39 @@ app.post('/upload', upload.single('image'), async (req, res) => {
     }
 });
 
-// Endpoint to display a specific image
 app.use('/image', express.static('images/processed'));
 
 // Endpoint to get positions of the earth and sun relative to the moon
 // given a time stamp (expected in UTC)
 app.get('/positions', async (req, res) => {
     try {
-        // Get the time stamp that was sent with the request as a query parameter
-        const { timeStamp } = req.query;
+        const { latitude, longitude, timeStamp } = req.query;
 
-        // Search for position information using the given time stamp
-        const earthSearch = await superagent.get(
-            `http://${ config.dataServer.ip }:${ config.dataServer.port }/planet-vector-search/moon/earth/${ timeStamp }`
+        const earthRotationSearch = await axios.get(
+            `http://${ config.dataServer.ip }:${ config.dataServer.port }/target-rotation/moon/earth/${ timeStamp }`
         );
-        const sunSearch = await superagent.get(
-            `http://${ config.dataServer.ip }:${ config.dataServer.port }/planet-vector-search/moon/sun/${ timeStamp }`
+        const personPositionSearch = await axios.get(
+            `http://${ config.dataServer.ip }:${ config.dataServer.port }/lat-to-rect/earth/earth/${ -1 * longitude }/${ latitude }/${ timeStamp }`
+        );
+        const moonPositionSearch = await axios.get(
+            `http://${ config.dataServer.ip }:${ config.dataServer.port }/planet-vector-search/earth/moon/${ timeStamp }`
+        );
+        const moonRotationSearch = await axios.get(
+            `http://${ config.dataServer.ip }:${ config.dataServer.port }/target-rotation/earth/moon/${ timeStamp }`
+        );
+        const sunPositionSearch = await axios.get(
+            `http://${ config.dataServer.ip }:${ config.dataServer.port }/planet-vector-search/earth/sun/${ timeStamp }`
         );
 
-        // Parse the search data for specifically the position information
-        const earth = JSON.parse(earthSearch.text).positions.earth;
-        const sun = JSON.parse(sunSearch.text).positions.sun;
-
-        // Respond with the position information
-        res.status(200).json({ earth, sun });
+        res.status(200).json({
+            "earth": earthRotationSearch.data,
+            "person": personPositionSearch.data.positions.earth,
+            "moon": {
+                ...moonPositionSearch.data.positions.moon,
+                ...moonRotationSearch.data
+            },
+            "sun": sunPositionSearch.data.positions.sun
+        });
     } catch(error) {
         // If there's any errors, respond with an error message and the actual
         // error itself
@@ -160,6 +136,21 @@ app.get('/positions', async (req, res) => {
             error
         });
     }
+});
+
+// Get the /ws websocket route
+app.ws('/ws', async function(ws, req) {
+    ws.on('message', async function(msg) {
+        fs.writeFile('test.ppm', msg, err => {
+            if (err) {
+              console.error(err);
+            }
+            // file written successfully
+            console.log("Written successfully");
+          });        
+        ws.send(JSON.stringify({ "message" : "success" }));
+        // Start listening for messages
+    });
 });
 
 // Start server

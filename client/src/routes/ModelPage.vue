@@ -1,178 +1,281 @@
 <script>
-    import axios from 'axios';
-    import * as THREE from 'three';
-    import { useCookies } from 'vue3-cookies';
-    import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import axios from 'axios';
+import * as THREE from 'three';
+import { useCookies } from 'vue3-cookies';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { Buffer } from 'buffer';
 
-    export default {
-        name: "ModelPage",
-        setup() {
-            const { cookies } = useCookies();
-            return { cookies };
-        },
-        data() {
-            return {
-                // Import, load, and instantiate textures for the moon, earth, and sun
-                moonTexture: new THREE.TextureLoader().load("https://raw.githubusercontent.com/GerardRosario/3DMoonstuff/main/moonstuff/MoonColorMap2.jpg"),
-                earthTexture: new THREE.TextureLoader().load(require("../assets/mesh/earth.jpg")),
-                sunTexture: new THREE.TextureLoader().load(require("../assets/mesh/sun.jpg")),
-            };
-        },
-        methods: {
-            // This method gets the time stamp stored in cookies (should be in
-            // UTC) and sends a request to the 'positions' express endpoint
-            // for the positions of the earth and sun relative to the moon
-            async getPositions() {
-                // Get the time stamp from cookies
-                let timeStamp = this.cookies.get("timeStamp");
-
-                // If there isn't a time stamp stored in cookies,
-                // set it to some random time stamp
-                if(!timeStamp) {
-                    timeStamp = '2022-10-16T06:59:30';
-                }
-
-                // Get the position information from the 'positions' endpoint
-                const response = await axios.get(
-                    'http://localhost:8888/positions/',
-                    {
-                        params: {
-                            timeStamp
-                        }
+export default {
+    name: 'ModelPage',
+    setup() {
+        const { cookies } = useCookies();
+        return { cookies };
+    },
+    data() {
+        return {
+            timeStamp: this.cookies.get('timeStamp'),
+            altitude: this.cookies.get('altitude'),
+            longitude: this.cookies.get('longitude'),
+            latitude: this.cookies.get('latitude'),
+            getRenderedPixels: false,
+            currentOrbit: '',
+            positions: {}
+        };
+    },
+    methods: {
+        async getPositions() {
+            const response = await axios.get(
+                'http://localhost:8888/positions/',
+                {
+                    params: {
+                        'timeStamp': this.timeStamp,
+                        'longitude': this.longitude,
+                        'latitude': this.latitude,
                     }
-                );
-
-                // Return the position information
-                return response.data;
-            },
-            // This method renders and animates the ThreeJs model
-            async renderModel() {
-                // Get position information for the earth and sun
-                const positions = await this.getPositions();
-
-                const canvas = document.getElementById("model-canvas");
-
-                // Instantiate renderer
-                const renderer = new THREE.WebGLRenderer({ alpha: true });
-
-                // Set render size and append it to the canvas
-                renderer.setSize(1600, 800);
-                canvas.appendChild(renderer.domElement);
-
-                // Instantiate the scene, camera, and orbit controls
-                const scene = new THREE.Scene();
-                const camera = new THREE.PerspectiveCamera(65, 2, 0.01, 1000000);
-                const orbit = new OrbitControls(camera, renderer.domElement);
-
-                // Set the camera position and update orbit controls
-                camera.position.set(-5, 0, 0);
-                orbit.update();
-
-                // Create Moon sphere
-                const moonGeo = new THREE.SphereGeometry(1.737, 30, 30);
-
-                // Create Moon mesh which will overlay the sphere
-                const moonMat = new THREE.MeshPhongMaterial({
-                    map: this.moonTexture
-                });
-
-                // Create Moon object 
-                const moon = new THREE.Mesh(moonGeo, moonMat);
-
-                // Set Moon position to origin
-                moon.position.x = 0;
-                moon.position.y = 0;
-                moon.position.z = 0;
-
-                // Add Moon to scene
-                scene.add(moon);
-
-                // Create Earth sphere
-                const earthGeo = new THREE.SphereGeometry(6.371, 30, 30);
-                const earthMat = new THREE.MeshPhongMaterial({
-                    map: this.earthTexture
-                });
-
-                // Create Earth mesh which will overlay the sphere
-                const earth = new THREE.Mesh(earthGeo, earthMat);
-
-                // Set Earth position relative to the moon
-                earth.position.x = positions.earth.x / 1000;
-                earth.position.y = positions.earth.y / 1000;
-                earth.position.z = positions.earth.z / 1000;
-
-                // Add Earth to the scene
-                scene.add(earth);
-
-                // Create Sun sphere
-                const sunGeo = new THREE.SphereGeometry(696.34, 30, 30);
-                const sunMat = new THREE.MeshBasicMaterial({
-                    map: this.sunTexture
-                });
-
-                // Create Sun mesh which will overlay the sphere
-                const sun = new THREE.Mesh(sunGeo, sunMat);
-
-                // Set Sun position relative to the moon
-                sun.position.x = positions.sun.x / 1000;
-                sun.position.y = positions.sun.y / 1000;
-                sun.position.z = positions.sun.z / 1000;
-
-                // Add Sun to the scene
-                scene.add(sun);
-
-                // Create point light to represent Sun light
-                const light = new THREE.PointLight(16777215, 2, 1000000);
-
-                // Set light's position to the Sun's position
-                light.position.x = sun.position.x;
-                light.position.y = sun.position.y;
-                light.position.z = sun.position.z;
-
-                // Add light to the scene
-                scene.add(light);
-
-                // Set Earth's and Moon's tilt
-                earth.rotateZ(23.44 * (3.14 / 180));
-                moon.rotateZ(-1.54 * (3.14 / 180));
-
-                // Animate the scene
-                const animate = () => {
-                    const width = canvas.clientWidth;
-                    const height = canvas.clientHeight;
-
-                    if (canvas.width !== width || canvas.height !== height) {
-                        renderer.setSize(width, height);
-                        camera.aspect = width / height;
-                        camera.updateProjectionMatrix();
-                    }
-
-                    //Self-rotation
-                    renderer.render(scene, camera);
                 }
-                renderer.setAnimationLoop(animate);
+            );
+
+            this.positions = response.data;
+        },
+        // Strips pixel raster of alpha component
+        // Data must be in RGBA format
+        RGBAToRGB(data) {
+            const out = new Uint8Array(data.length * 3 / 4);
+            for (let i = 0; i < data.length; i++) {
+                if (i + 1 % 4 != 0) {
+                    out[i - Math.floor(i / 4)] = data[i];
+                }
             }
+            return out;
         },
-        mounted() {
-            // When the page is loaded, this code will run
-            this.renderModel();
+        // Converts raster data into PPM image format
+        // Data must be RGB Uint8Array of length width * height * 3
+        formatPPM(data, width, height, maxVal) {
+            let out = '';
+            out = out.concat('P3\n', width, ' ', height, '\n', maxVal, '\n');
+            for (let i = 0; i < data.length; i++) {
+                out = out.concat(data[i], ' ');
+                if (i != 0 && i % width * 3 == 0) {
+                    out = out.concat('\n');
+                }
+            }
+            return out;
         },
+        sendMessage(message) {
+            console.log('Hello');
+            console.log(this.connection);
+            this.connection.send(message);
+        },
+        setAwaitFlag() {
+            this.getRenderedPixels = true;
+        },
+        init() {
+            this.renderer = new THREE.WebGLRenderer({ antialias: true });
+            this.renderTarget = new THREE.WebGLRenderTarget({ antialias: true });
+            this.scene = new THREE.Scene();
+            this.camera = new THREE.PerspectiveCamera(45, 1050 / 450, 0.1, 2000);
+            this.orbit = new OrbitControls(this.camera, this.renderer.domElement);
+            this.earthTexture = new THREE.TextureLoader().load(require('../assets/mesh/earth.jpg'));
+            this.moonTexture = new THREE.TextureLoader().load(require('../assets/mesh/moon-4k.jpg'));
+        },
+        renderScene() {
+            this.renderer.setSize(window.innerWidth * .95, window.innerHeight * .8);
+            this.renderTarget.setSize(window.innerWidth * .95, window.innerHeight * .8);
+            document.getElementById('model-canvas').appendChild(this.renderer.domElement);
+
+            const earthGeo = new THREE.SphereGeometry(6.371, 30, 30);
+            const earthMat = new THREE.MeshPhongMaterial({
+                map: this.earthTexture,
+                shininess: 0
+            });
+            const earth = new THREE.Mesh(earthGeo, earthMat);
+            earth.position.x = 0;
+            earth.position.y = 0;
+            earth.position.z = 0;
+            earth.rotateY(this.positions.earth.rotation_angle * (3.14 / 180));
+            this.scene.add(earth);
+
+            const personGeo = new THREE.SphereGeometry(.05);
+            const personMat = new THREE.MeshBasicMaterial({
+                color: 0xe62117
+            });
+            const person = new THREE.Mesh(personGeo, personMat);
+            person.position.x = this.positions.person.x / 1000;
+            person.position.y = this.positions.person.z / 1000;
+            person.position.z = this.positions.person.y / 1000;
+            earth.add(person);
+
+            this.positions.person.relative = earth.localToWorld(
+                new THREE.Vector3(
+                    person.position.x,
+                    person.position.y,
+                    person.position.z
+                )
+            );
+
+            const moonGeo = new THREE.SphereGeometry(1.737, 30, 30);
+            const moonMat = new THREE.MeshPhongMaterial({
+                map: this.moonTexture,
+                shininess: 0
+            });
+            const moon = new THREE.Mesh(moonGeo, moonMat);
+            moon.position.x = this.positions.moon.x / 1000;
+            moon.position.y = this.positions.moon.z / 1000;
+            moon.position.z = this.positions.moon.y / 1000;
+            moon.rotateY(-1 * (180 - this.positions.moon.rotation_angle) * (3.14 / 180));
+            this.scene.add(moon);
+
+            const light = new THREE.PointLight(0xffffff, 2.5, 1000000);
+            light.position.x = this.positions.sun.x / 1000;
+            light.position.y = this.positions.sun.z / 1000;
+            light.position.z = this.positions.sun.y / 1000;
+            this.scene.add(light);
+
+            this.changeOrbit('Moon');
+
+            const ambientLight = new THREE.AmbientLight(0x404040);
+            earth.add(ambientLight);
+
+            const earthAxes = new THREE.AxesHelper(10);
+            earthAxes.position.x = earth.position.x;
+            earthAxes.position.y = earth.position.y;
+            earthAxes.position.z = earth.position.z;
+            this.scene.add(earthAxes);
+
+            const moonAxes = new THREE.AxesHelper(10);
+            moonAxes.position.x = moon.position.x;
+            moonAxes.position.y = moon.position.y;
+            moonAxes.position.z = moon.position.z;
+            this.scene.add(moonAxes);
+        },
+        changeOrbit(newAnchor) {
+            this.currentOrbit = newAnchor;
+            const newFocusPosition = {};
+
+            if (newAnchor === 'Person') {
+                newFocusPosition.x = this.positions.person.relative.x;
+                newFocusPosition.y = this.positions.person.relative.y;
+                newFocusPosition.z = this.positions.person.relative.z;
+            }
+            else if (newAnchor === 'Earth') {
+                newFocusPosition.x = 0;
+                newFocusPosition.y = 0;
+                newFocusPosition.z = 0;
+            } else {
+                newFocusPosition.x = this.positions.moon.x / 1000;
+                newFocusPosition.y = this.positions.moon.z / 1000;
+                newFocusPosition.z = this.positions.moon.y / 1000;
+            }
+
+            const newWorldBox = new THREE.Box3().setFromCenterAndSize(
+                new THREE.Vector3(newFocusPosition.x, newFocusPosition.y, newFocusPosition.z),
+                new THREE.Vector3(.1, .1, .1),
+            );
+            newWorldBox.getCenter(this.orbit.target);
+            this.orbit.update();
+        },
+        animate() {
+            const canvas = document.getElementById('model-canvas');
+            const width = canvas.clientWidth;
+            const height = canvas.clientHeight;
+
+            if (canvas.width !== width || canvas.height !== height) {
+                this.renderer.setSize(canvas.width, canvas.height);
+                this.camera.aspect = canvas.width / canvas.height;
+                this.camera.updateProjectionMatrix();
+            }
+            // Flag is triggered when the user clicks the screen
+            if (this.getRenderedPixels) {
+
+                // Renders to secondary target instead of canvas
+                this.renderer.setRenderTarget(this.renderTarget);
+                this.renderer.render(this.scene, this.camera);
+
+                // Reads RGBA values into buffer
+                const buffer = new Buffer(window.innerWidth * window.innerHeight * 4);
+                this.renderer.readRenderTargetPixels(this.renderTarget, 0, 0, window.innerWidth, window.innerHeight, buffer);
+
+                // Removes alpha values
+                const bufferRGB = this.RGBAToRGB(buffer);
+
+                // Formats RGB values into PPM image format
+                const ppmFile = this.formatPPM(bufferRGB, window.innerWidth, window.innerHeight, 255);
+
+                console.log(ppmFile);
+
+                this.sendMessage(ppmFile);
+
+                // Deactivates flag so model will render as normal
+                this.getRenderedPixels = false;
+
+            } else {
+                this.renderer.render(this.scene, this.camera);
+            }
+        }
+    },
+    async mounted() {
+        await this.getPositions();
+        this.init();
+        this.renderScene();
+        this.renderer.setAnimationLoop(this.animate);
+    },
+    created() {
+        console.log('Starting connection to WebSocket Server');
+
+        const socketProtocol = (window.location.protocol === 'https:' ? 'wss:' : 'ws:');
+        const port = ':8888';
+        const echoSocketUrl = socketProtocol + '//' + window.location.hostname + port + '/ws';
+
+        this.connection = new WebSocket(echoSocketUrl);
+
+        this.connection.onmessage = function (event) {
+            console.log(event);
+        }
+
+        this.connection.onopen = function (event) {
+            console.log(event)
+            console.log('Successfully connected to the echo websocket server...')
+        }
+
+    },
+    beforeUnmount() {
+        this.renderer.setAnimationLoop(null);
     }
+}
 </script>
 
 <template>
+    <div id="test-buttons">
+        <button class="button" id="get-ppm" @click="setAwaitFlag">Get PPM</button>
+        <p>Orbit:
+            <a @click="changeOrbit('Person')">Person</a>
+            <a @click="changeOrbit('Earth')">Earth</a>
+            <a @click="changeOrbit('Moon')">Moon</a>
+        </p>
+    </div>
     <div class="columns is-centered">
         <div id="model-canvas">
         </div>
+        <p id="sanity-check"></p>
     </div>
 </template>
 
 <style>
-    #model {
-        margin-top: -5rem;
-    }
+#test-buttons {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+}
 
-    #model-canvas {
-        z-index: 7;
-    }
+#test-buttons a {
+    margin-left: .5rem;
+    margin-right: .5rem;
+}
+
+#model {
+    margin-top: -5rem;
+}
+
+#model-canvas {
+    z-index: 7;
+}
 </style>

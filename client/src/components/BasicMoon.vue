@@ -1,92 +1,65 @@
 <script>
-    import * as THREE from 'three'
+import * as THREE from 'three'
 
-    export default {
-        name: "BasicMoon",
-        data() {
-            return {
-                // Import, load, and instantiate texture for the moon
-                moonTexture: new THREE.TextureLoader().load("https://raw.githubusercontent.com/GerardRosario/3DMoonstuff/main/moonstuff/MoonColorMap2.jpg"),
-            }
-        },
-        methods: {
-            RenderMoon() {
-                const canvas = document.getElementById("moon-canvas");
-
-                // Instantiate renderer
-                const renderer = new THREE.WebGLRenderer({ alpha: true });
-
-                // Set render size and append it to the canvas
-                renderer.setSize(1050, 450);
-                canvas.appendChild(renderer.domElement);
-
-                // Instantiate the scene and camera
-                const scene = new THREE.Scene();
-                const camera = new THREE.PerspectiveCamera(45, 1050/450, 0.1, 1050);
-
-                // Set the camera position
-                camera.position.set(0, 0, 2);
-
-                // Create point light to represent Sun light
-                const light = new THREE.PointLight(0xffffff, 2, 200);
-
-                // Set the light's position
-                light.position.set(-50, 0, 50);
-
-                // Add light to the scene
-                scene.add(light);
-
-                // Create Moon sphere
-                const moonGeo = new THREE.SphereGeometry(0.57, 62, 62);
-
-                // Create Moon mesh which will overlay the sphere
-                const moonMat = new THREE.MeshPhongMaterial({
-                    map: this.moonTexture
-                });
-
-                // Create Moon object 
-                const moon = new THREE.Mesh(moonGeo, moonMat);
-
-                // Add Moon to scene
-                scene.add(moon);
-
-                // Animate the scene
-                const animate = () => {
-                    requestAnimationFrame(animate);
-
-                    const width = canvas.clientWidth;
-                    const height = canvas.clientHeight;
-
-                    if (canvas.width !== width || canvas.height !== height) {
-                        renderer.setSize(width, height);
-                        camera.aspect = width / height;
-                        camera.updateProjectionMatrix();
-                    }
-
-                    moon.rotation.y += 0.005;
-
-                    renderer.render(scene, camera);
-                };
-                animate();
-            }
-        },
-        mounted() {
-            // When the page is loaded, this code will run
-            this.RenderMoon();
+export default {
+    name: 'BasicMoon',
+    data() {
+        return {
         }
+    },
+    methods: {
+        init() {
+            this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            this.scene = new THREE.Scene();
+            this.camera = new THREE.PerspectiveCamera(45, 1050 / 450, 0.1, 1050);
+            this.moonTexture = new THREE.TextureLoader().load(require('../assets/mesh/moon-1k.jpg'));
+        },
+        renderScene() {
+            this.renderer.setSize(1050, 450);
+
+            const canvas = document.getElementById('moon-canvas');
+            canvas.appendChild(this.renderer.domElement);
+
+            this.camera.position.set(0, 0, 6);
+
+            const light = new THREE.PointLight(0xffffff, 3.5, 200);
+            light.position.set(-50, 0, 50);
+            this.scene.add(light);
+
+            const moonGeo = new THREE.SphereGeometry(1.737, 30, 30);
+            const moonMat = new THREE.MeshPhongMaterial({
+                map: this.moonTexture,
+                shininess: 0
+            });
+            this.moon = new THREE.Mesh(moonGeo, moonMat);
+            this.scene.add(this.moon);
+        },
+        animate() {
+            this.moon.rotation.y += 0.0025;
+            this.renderer.render(this.scene, this.camera);
+        }
+    },
+    mounted() {
+        this.init();
+        this.renderScene();
+        this.renderer.setAnimationLoop(this.animate);
+    },
+    beforeUnmount() {
+        this.renderer.setAnimationLoop(null);
     }
+}
 </script>
 
 <template>
-    <div class="columns is-centered">
-        <div id="moon-canvas">
+    <div class='columns is-centered'>
+        <div id='moon-canvas'>
 
         </div>
     </div>
 </template>
 
 <style>
-    #moon-canvas {
-        z-index: 7;
-    }
+#moon-canvas {
+    z-index: 7;
+}
 </style>

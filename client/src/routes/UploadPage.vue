@@ -1,15 +1,13 @@
 <script>
-    import ImageUploadForm from '../components/ImageUploadForm.vue'
-    import AnimatedStars from '../components/AnimatedStars.vue'
+import ImageUploadForm from '../components/ImageUploadForm.vue'
 
-    export default {
-        name: 'UploadPage',
-        components: { ImageUploadForm, AnimatedStars }
-    }
+export default {
+    name: 'UploadPage',
+    components: { ImageUploadForm }
+}
 </script>
 
 <template>
-    <AnimatedStars />
     <ImageUploadForm />
 
     <div id="instructions">
@@ -17,8 +15,8 @@
             <div class="column is-two-thirds">
                 <h1>How Does it Work?</h1>
                 <h2>
-                    Moon Trek Telescope is an application that allows you to submit your own 
-                    images of the moon and receive useful information within the field of view, 
+                    Moon Trek Telescope is an application that allows you to submit your own
+                    images of the moon and receive useful information within the field of view,
                     such as annotations, layering, etc.
                 </h2>
             </div>
@@ -26,14 +24,14 @@
         <div class="columns is-centered">
             <div class="column is-one-third">
                 <h3>
-                    Begin by selecting your image of the moon. For best registration results consider: 
+                    Begin by selecting your image of the moon. For best registration results consider:
                     clear, non blurry images with at least 50% of the moon.
                 </h3>
             </div>
             <div class="column is-one-third">
                 <h3>
-                    Our application will attempt image registration. If the image registers properly, we 
-                    will be able to annotate your image. If registration fails, then you will have to 
+                    Our application will attempt image registration. If the image registers properly, we
+                    will be able to annotate your image. If registration fails, then you will have to
                     resubmit a better image.
                 </h3>
             </div>
@@ -42,23 +40,43 @@
 </template>
 
 <style>
-    #instructions h1 {
-        font-size: 2rem;
-        font-weight: bold;
-        text-decoration: underline;
-        margin-top: 3rem;
-        margin-bottom: 1.2rem;
-    }
+#instructions h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    text-decoration: underline;
+    margin-top: 3rem;
+    margin-bottom: 1.2rem;
+}
 
+#instructions h2 {
+    font-size: 1.6rem;
+}
+
+#instructions h3 {
+    font-size: 1.4rem;
+}
+
+#instructions p {
+    font-size: 1.2rem;
+}
+
+@media (min-width: 180px) and (max-width: 768px) {
     #instructions h2 {
-        font-size: 1.6rem;
+        font-size: 1.4rem;
+        padding-left: 1.4rem;
+        padding-right: 1.4rem;
     }
 
     #instructions h3 {
-        font-size: 1.4rem;
+        font-size: 1.2rem;
+        padding-left: 1.4rem;
+        padding-right: 1.4rem;
     }
 
     #instructions p {
-        font-size: 1.2rem;
+        font-size: 1rem;
+        padding-left: 1.4rem;
+        padding-right: 1.4rem;
     }
+}
 </style>
