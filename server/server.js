@@ -96,7 +96,6 @@ app.post('/upload', upload.single('image'), async (req, res) => {
 });
 
 app.use('/image', express.static('images/processed'));
-app.use('/model', express.static('models'));
 
 // Endpoint to get positions of the earth and sun relative to the moon
 // given a time stamp (expected in UTC)

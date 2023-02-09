@@ -12,7 +12,7 @@ export default {
             this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
             this.scene = new THREE.Scene();
             this.camera = new THREE.PerspectiveCamera(45, 1050 / 450, 0.1, 1050);
-            this.moonTexture = new THREE.TextureLoader().load(require('../assets/mesh/moon-4k.jpg'));
+            this.moonTexture = new THREE.TextureLoader().load(require('../assets/mesh/moon-1k.jpg'));
         },
         renderScene() {
             this.renderer.setSize(1050, 450);
@@ -35,19 +35,7 @@ export default {
             this.scene.add(this.moon);
         },
         animate() {
-            requestAnimationFrame(this.animate);
-
-            const canvas = document.getElementById('moon-canvas');
-            const width = canvas.clientWidth;
-            const height = canvas.clientHeight;
-
-            if (canvas.width !== width || canvas.height !== height) {
-                this.renderer.setSize(width, height);
-                this.camera.aspect = width / height;
-                this.camera.updateProjectionMatrix();
-            }
-
-            this.moon.rotation.y += 0.00025;
+            this.moon.rotation.y += 0.0025;
             this.renderer.render(this.scene, this.camera);
         }
     },

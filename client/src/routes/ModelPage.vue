@@ -17,8 +17,8 @@ export default {
             altitude: this.cookies.get('altitude'),
             longitude: this.cookies.get('longitude'),
             latitude: this.cookies.get('latitude'),
-            currentOrbit: '',
             getRenderedPixels: false,
+            currentOrbit: '',
             positions: {}
         };
     },
@@ -76,7 +76,7 @@ export default {
             this.camera = new THREE.PerspectiveCamera(45, 1050 / 450, 0.1, 2000);
             this.orbit = new OrbitControls(this.camera, this.renderer.domElement);
             this.earthTexture = new THREE.TextureLoader().load(require('../assets/mesh/earth.jpg'));
-            this.moonTexture = new THREE.TextureLoader().load(require('../assets/mesh/moon-8k.png'));
+            this.moonTexture = new THREE.TextureLoader().load(require('../assets/mesh/moon-4k.jpg'));
         },
         renderScene() {
             this.renderer.setSize(window.innerWidth * .95, window.innerHeight * .8);
@@ -180,8 +180,8 @@ export default {
             const height = canvas.clientHeight;
 
             if (canvas.width !== width || canvas.height !== height) {
-                this.renderer.setSize(width, height);
-                this.camera.aspect = width / height;
+                this.renderer.setSize(canvas.width, canvas.height);
+                this.camera.aspect = canvas.width / canvas.height;
                 this.camera.updateProjectionMatrix();
             }
             // Flag is triggered when the user clicks the screen
