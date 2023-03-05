@@ -130,13 +130,10 @@ export default {
 
                 const utcStamp = localStamp.withZoneSameInstant(ZoneId.of('UTC'));
 
-                // console.log(this.timeStamp, timeZone);
-                // console.log(`${localStamp.year()}-${localStamp.monthValue()}-${localStamp.dayOfMonth()}T${localStamp.hour()}:${localStamp.minute()}:${localStamp.second()}`);
-                // console.log(`${utcStamp.year()}-${utcStamp.monthValue()}-${utcStamp.dayOfMonth()}T${utcStamp.hour()}:${utcStamp.minute()}:${utcStamp.second()}`);
-
                 // Store file name, UTC time stamp, and geolocation data in cookies
                 this.cookies.set("fileName", fileName);
-                this.cookies.set("timeStamp", `${utcStamp.year()}-${utcStamp.monthValue()}-${utcStamp.dayOfMonth()}T${utcStamp.hour()}:${utcStamp.minute()}:${utcStamp.second()}`);
+                this.cookies.set("timeStampLocal", this.timeStamp);
+                this.cookies.set("timeStampUTC", `${utcStamp.year()}-${utcStamp.monthValue()}-${utcStamp.dayOfMonth()}T${utcStamp.hour()}:${utcStamp.minute()}:${utcStamp.second()}`);
                 this.cookies.set("longitude", this.longitude);
                 this.cookies.set("latitude", this.latitude);
                 this.cookies.set("altitude", this.altitude);

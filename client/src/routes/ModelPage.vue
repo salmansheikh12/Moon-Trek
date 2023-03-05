@@ -5,6 +5,9 @@ import { useCookies } from 'vue3-cookies';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { Buffer } from 'buffer';
 
+// THREE.Object3D.DEFAULT_UP.set(0, 1, 0);
+// THREE.Object3D.DEFAULT_UP.set(0, -1, 1);
+
 export default {
     name: 'ModelPage',
     setup() {
@@ -13,10 +16,13 @@ export default {
     },
     data() {
         return {
-            timeStamp: this.cookies.get('timeStamp'),
+            timeStampLocal: this.cookies.get('timeStampLocal'),
+            timeStampUTC: this.cookies.get('timeStampUTC'),
             altitude: this.cookies.get('altitude'),
             longitude: this.cookies.get('longitude'),
             latitude: this.cookies.get('latitude'),
+            width: window.innerWidth * .8,
+            height: window.innerHeight * .8,
             getRenderedPixels: false,
             currentOrbit: '',
             positions: {}
@@ -28,7 +34,7 @@ export default {
                 'http://localhost:8888/positions/',
                 {
                     params: {
-                        'timeStamp': this.timeStamp,
+                        'timeStamp': this.timeStampUTC,
                         'longitude': this.longitude,
                         'latitude': this.latitude,
                     }
@@ -77,32 +83,46 @@ export default {
             this.orbit = new OrbitControls(this.camera, this.renderer.domElement);
             this.earthTexture = new THREE.TextureLoader().load(require('../assets/mesh/earth.jpg'));
             this.moonTexture = new THREE.TextureLoader().load(require('../assets/mesh/moon-4k.jpg'));
+
+            // this.camera.up = new THREE.Vector3(0, 0, 1);
         },
         renderScene() {
             this.renderer.setSize(window.innerWidth * .95, window.innerHeight * .8);
             this.renderTarget.setSize(window.innerWidth * .95, window.innerHeight * .8);
             document.getElementById('model-canvas').appendChild(this.renderer.domElement);
 
-            const earthGeo = new THREE.SphereGeometry(6.371, 30, 30);
-            const earthMat = new THREE.MeshPhongMaterial({
-                map: this.earthTexture,
-                shininess: 0
-            });
-            const earth = new THREE.Mesh(earthGeo, earthMat);
+            const earth = new THREE.Mesh(
+                new THREE.SphereGeometry(6.371, 30, 30),
+                new THREE.MeshPhongMaterial({
+                    map: this.earthTexture,
+                    shininess: 0
+                })
+            );
             earth.position.x = 0;
             earth.position.y = 0;
             earth.position.z = 0;
-            earth.rotateY(this.positions.earth.rotation_angle * (3.14 / 180));
+            // earth.rotateX(Math.PI / 2);
+            // const earthMatrix = new THREE.Matrix4;
+            // earthMatrix.makeRotationAxis(
+            //     new THREE.Vector3(
+            //         this.positions.earth.rotation_axis[0],
+            //         this.positions.earth.rotation_axis[1],
+            //         this.positions.earth.rotation_axis[2]
+            //     ),
+            //     this.positions.earth.rotation_angle * Math.PI / 180
+            // );
+            // earth.applyMatrix4(earthMatrix);
             this.scene.add(earth);
 
-            const personGeo = new THREE.SphereGeometry(.05);
-            const personMat = new THREE.MeshBasicMaterial({
-                color: 0xe62117
-            });
-            const person = new THREE.Mesh(personGeo, personMat);
+            const person = new THREE.Mesh(
+                new THREE.SphereGeometry(.05),
+                new THREE.MeshBasicMaterial({
+                    color: 0xe62117
+                })
+            );
             person.position.x = this.positions.person.x / 1000;
-            person.position.y = this.positions.person.z / 1000;
-            person.position.z = this.positions.person.y / 1000;
+            person.position.y = this.positions.person.y / 1000;
+            person.position.z = this.positions.person.z / 1000;
             earth.add(person);
 
             this.positions.person.relative = earth.localToWorld(
@@ -113,25 +133,48 @@ export default {
                 )
             );
 
-            const moonGeo = new THREE.SphereGeometry(1.737, 30, 30);
-            const moonMat = new THREE.MeshPhongMaterial({
-                map: this.moonTexture,
-                shininess: 0
-            });
-            const moon = new THREE.Mesh(moonGeo, moonMat);
-            moon.position.x = this.positions.moon.x / 1000;
-            moon.position.y = this.positions.moon.z / 1000;
-            moon.position.z = this.positions.moon.y / 1000;
-            moon.rotateY(-1 * (180 - this.positions.moon.rotation_angle) * (3.14 / 180));
+            const moon = new THREE.Mesh(
+                new THREE.SphereGeometry(1.737, 30, 30),
+                new THREE.MeshPhongMaterial({
+                    map: this.moonTexture,
+                    shininess: 0
+                })
+            );
+            moon.position.set(
+                this.positions.moon.x / 1000,
+                this.positions.moon.y / 1000,
+                this.positions.moon.z / 1000
+            );
+            // const moonMatrix = new THREE.Matrix4;
+            // moonMatrix.setPosition(
+            //     this.positions.moon.x / 1000,
+            //     this.positions.moon.y / 1000,
+            //     this.positions.moon.z / 1000
+            // );
+            // moonMatrix.makeRotationAxis(
+            //     new THREE.Vector3(
+            //         this.positions.moon.rotation_axis[0],
+            //         this.positions.moon.rotation_axis[2],
+            //         this.positions.moon.rotation_axis[1]
+            //     ),
+            //     this.positions.moon.rotation_angle * Math.PI / 180
+            // );
+            // moon.applyMatrix4(moonMatrix);
             this.scene.add(moon);
 
             const light = new THREE.PointLight(0xffffff, 2.5, 1000000);
             light.position.x = this.positions.sun.x / 1000;
-            light.position.y = this.positions.sun.z / 1000;
-            light.position.z = this.positions.sun.y / 1000;
+            light.position.y = this.positions.sun.y / 1000;
+            light.position.z = this.positions.sun.z / 1000;
             this.scene.add(light);
 
-            this.changeOrbit('Moon');
+            this.camera.position.x = this.positions.person.relative.x;
+            this.camera.position.y = this.positions.person.relative.y;
+            this.camera.position.z = this.positions.person.relative.z;
+            this.changeOrbit('Earth');
+
+            // const moonDirection = this.camera.position.clone().sub(moon.position).normalize();
+            // this.camera.position.add(moonDirection.clone().multiplyScalar(-367.5));
 
             const ambientLight = new THREE.AmbientLight(0x404040);
             earth.add(ambientLight);
@@ -163,8 +206,8 @@ export default {
                 newFocusPosition.z = 0;
             } else {
                 newFocusPosition.x = this.positions.moon.x / 1000;
-                newFocusPosition.y = this.positions.moon.z / 1000;
-                newFocusPosition.z = this.positions.moon.y / 1000;
+                newFocusPosition.y = this.positions.moon.y / 1000;
+                newFocusPosition.z = this.positions.moon.z / 1000;
             }
 
             const newWorldBox = new THREE.Box3().setFromCenterAndSize(
@@ -175,13 +218,12 @@ export default {
             this.orbit.update();
         },
         animate() {
-            const canvas = document.getElementById('model-canvas');
-            const width = canvas.clientWidth;
-            const height = canvas.clientHeight;
+            const width = window.innerWidth * .95;
+            const height = window.innerHeight * .8;
 
-            if (canvas.width !== width || canvas.height !== height) {
-                this.renderer.setSize(canvas.width, canvas.height);
-                this.camera.aspect = canvas.width / canvas.height;
+            if (this.width !== width || this.height !== height) {
+                this.renderer.setSize(width, height);
+                this.camera.aspect = width / height;
                 this.camera.updateProjectionMatrix();
             }
             // Flag is triggered when the user clicks the screen
@@ -245,6 +287,9 @@ export default {
 </script>
 
 <template>
+    <div class="columns is-centered" id="cookies-data">
+        {{ this.latitude }}, {{ this.longitude }} | {{ this.timeStampLocal }} | {{ this.timeStampUTC }}
+    </div>
     <div id="test-buttons">
         <button class="button" id="get-ppm" @click="setAwaitFlag">Get PPM</button>
         <p>Orbit:
@@ -256,23 +301,23 @@ export default {
     <div class="columns is-centered">
         <div id="model-canvas">
         </div>
-        <p id="sanity-check"></p>
     </div>
 </template>
 
 <style>
+#cookies-data {
+    font-size: 1.2rem;
+    margin-bottom: .5rem;
+}
+
 #test-buttons {
     font-size: 1.2rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 #test-buttons a {
     margin-left: .5rem;
     margin-right: .5rem;
-}
-
-#model {
-    margin-top: -5rem;
 }
 
 #model-canvas {
