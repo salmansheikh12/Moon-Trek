@@ -1,5 +1,6 @@
 const yargs = require('yargs/yargs');
-const converter = require('./converter.js');
+const path = require('path');
+const converter = require(path.join(__dirname, 'converter.js'));
 const supportedOutputType = ['png', 'jpg', 'jpeg'];
 
 yargs(process.argv.slice(2))

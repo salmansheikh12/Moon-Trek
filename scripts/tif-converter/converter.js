@@ -1,8 +1,9 @@
 const sharp = require('sharp');
+const path = require('path');
 
 const convertTif = async (inputImage, scale, outputName, outputType) => {
     try {
-        const image = await sharp(`input/${ inputImage }`, { limitInputPixels: false });
+        const image = await sharp(path.join(__dirname, 'input', inputImage), { limitInputPixels: false });
         const { width, height } = await image.metadata();
         const resizedImage = await image.resize({ 
             width: Math.round(width * scale),
@@ -12,11 +13,11 @@ const convertTif = async (inputImage, scale, outputName, outputType) => {
         if (outputType === 'png') {
             resizedImage
             .png()
-            .toFile(`output/${ outputName }.png`);
+            .toFile(path.join(__dirname, 'output', `${outputName}.png`));
         } else {
             resizedImage
             .jpeg()
-            .toFile(`output/${ outputName }.jpg`);
+            .toFile(path.join(__dirname, 'output', `${outputName}.jpg`));
         }
     } catch (err) {
         console.log(err);

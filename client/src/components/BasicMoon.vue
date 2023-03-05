@@ -43,9 +43,6 @@ export default {
         this.init();
         this.renderScene();
         this.renderer.setAnimationLoop(this.animate);
-    },
-    beforeUnmount() {
-        this.renderer.setAnimationLoop(null);
     }
 }
 </script>
