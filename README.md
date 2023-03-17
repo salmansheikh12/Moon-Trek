@@ -1,33 +1,6 @@
 # Moon Trek
 ## This is an implementation of [last year's work](https://github.com/Tonize/MoonTrek-Telescope-AR) with vuejs and expressjs
 
-## Directories:
-- Client
-    - public: This folder contains the base html file
-    - src:
-        - assets:
-            - mesh: This folder contains WAC images for 3d models
-            - logo.png: This icon is displayed in the browser tab
-            - MoonData.json: This file contains all info for Craters, Maria, and Landing Sites which will be used on the Connect Page
-        - components:
-            - BasicMoon.vue: This components displays the spinning moon which is seen on home page
-            - ImageCanvas.vue: This component scans through MoonData.json and displays points for the user to select. It also displays the resized image and plots the points of interest over it. Finally, it also displays information for the selected point of interest.
-            - ImageUploadForm.vue: This component displays the form for the user to upload and image. It scans the selected image before uploading and checks if meta data is present. If not a form is displayed for the user to manually enter the required information (altitude, latitude, longitude, and date/time)
-            - NavBar.vue: This component is used to display the navbar on every page
-        - routes:
-            - ConnectPage.vue: This is the route for the Connect page and displays either the image canvas data or image showing registration
-            - HomePage.vue: This is the route for the Home page
-            - ModelPage.vue: This is the route for the Model page and it displays the 3D model
-            - Upload.vue: This is the route for the Uploading page
-        - App.vue: The base vue which displays the routes. It contains the css for the animated stars background and a call to the NavBar so they show on every route
-- Server
-    - image-registration: This folder contains the python file which does image resizing and registration
-        - globe_all: Globe images used during registration
-    - images: This folder contains uploaded images in one folder and processed images (created after registration) in another folder
-    - Server.js: All the code for the backend. Initializing express and all its endpoints
-
-![diagram](diagram.png)
-
 ## Install ([video](https://www.youtube.com/watch?v=qeVeNWcuBx4)):
 1. Download [NodeJs](https://nodejs.org/en/download/) and [Anaconda](https://www.anaconda.com/). Make sure to add conda to your path when installing on Windows (it will ask). If you already installed Anaconda and didn't add it to your path, follow [these instructions](https://www.youtube.com/watch?v=9ol-kyJXmnU)
 
@@ -63,3 +36,31 @@
     ```
     npm run start
     ```
+
+
+## Overall Structure:
+- Client
+    - public: This folder contains the base html file
+    - src:
+        - assets:
+            - mesh: This folder contains WAC images for 3d models
+            - logo.png: This icon is displayed in the browser tab
+            - MoonData.json: This file contains all info for Craters, Maria, and Landing Sites which will be used on the Connect Page
+        - components:
+            - BasicMoon.vue: This components displays the spinning moon which is seen on home page
+            - ImageCanvas.vue: This component scans through MoonData.json and displays points for the user to select. It also displays the resized image and plots the points of interest over it. Finally, it also displays information for the selected point of interest.
+            - ImageUploadForm.vue: This component displays the form for the user to upload and image. It scans the selected image before uploading and checks if meta data is present. If not a form is displayed for the user to manually enter the required information (altitude, latitude, longitude, and date/time)
+            - NavBar.vue: This component is used to display the navbar on every page
+        - routes:
+            - ConnectPage.vue: This is the route for the Connect page and displays either the image canvas data or image showing registration
+            - HomePage.vue: This is the route for the Home page
+            - ModelPage.vue: This is the route for the Model page and it displays the 3D model
+            - Upload.vue: This is the route for the Uploading page
+        - App.vue: The base vue which displays the routes. It contains the css for the animated stars background and a call to the NavBar so they show on every route
+- Server
+    - image-registration: This folder contains the python file which does image resizing and registration
+        - globe_all: Globe images used during registration
+    - images: This folder contains uploaded images in one folder and processed images (created after registration) in another folder
+    - Server.js: All the code for the backend. Initializing express and all its endpoints
+
+![diagram](diagram.png)
