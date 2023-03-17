@@ -1,0 +1,15 @@
+[Unit]
+Description="Express Server"
+
+[Service]
+ExecStart=/usr/bin/node server.js
+WorkingDirectory=/home/ubuntu/moon-trek/server/
+Restart=always
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=ExpressServer
+Environment=NODE_ENV=production PORT=8888
+
+[Install]
+WantedBy=multi-user.target
