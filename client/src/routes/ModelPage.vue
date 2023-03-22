@@ -101,7 +101,6 @@ export default {
             earth.position.x = 0;
             earth.position.y = 0;
             earth.position.z = 0;
-            // earth.rotateX(Math.PI / 2);
             // const earthMatrix = new THREE.Matrix4;
             // earthMatrix.makeRotationAxis(
             //     new THREE.Vector3(
@@ -120,18 +119,10 @@ export default {
                     color: 0xe62117
                 })
             );
-            person.position.x = this.positions.person.x / 1000;
-            person.position.y = this.positions.person.y / 1000;
-            person.position.z = this.positions.person.z / 1000;
-            earth.add(person);
-
-            this.positions.person.relative = earth.localToWorld(
-                new THREE.Vector3(
-                    person.position.x,
-                    person.position.y,
-                    person.position.z
-                )
-            );
+            person.position.x = this.positions.person.x;
+            person.position.y = this.positions.person.y;
+            person.position.z = this.positions.person.z;
+            this.scene.add(person);
 
             const moon = new THREE.Mesh(
                 new THREE.SphereGeometry(1.737, 30, 30),
@@ -141,15 +132,15 @@ export default {
                 })
             );
             moon.position.set(
-                this.positions.moon.x / 1000,
-                this.positions.moon.y / 1000,
-                this.positions.moon.z / 1000
+                this.positions.moon.x,
+                this.positions.moon.y,
+                this.positions.moon.z
             );
             // const moonMatrix = new THREE.Matrix4;
             // moonMatrix.setPosition(
-            //     this.positions.moon.x / 1000,
-            //     this.positions.moon.y / 1000,
-            //     this.positions.moon.z / 1000
+            //     this.positions.moon.x,
+            //     this.positions.moon.y,
+            //     this.positions.moon.z
             // );
             // moonMatrix.makeRotationAxis(
             //     new THREE.Vector3(
@@ -163,16 +154,16 @@ export default {
             this.scene.add(moon);
 
             const light = new THREE.PointLight(0xffffff, 2.5, 1000000);
-            light.position.x = this.positions.sun.x / 1000;
-            light.position.y = this.positions.sun.y / 1000;
-            light.position.z = this.positions.sun.z / 1000;
+            light.position.x = this.positions.sun.x;
+            light.position.y = this.positions.sun.y;
+            light.position.z = this.positions.sun.z;
             this.scene.add(light);
 
-            this.camera.position.x = this.positions.person.relative.x;
-            this.camera.position.y = this.positions.person.relative.y;
-            this.camera.position.z = this.positions.person.relative.z;
-            this.changeOrbit('Earth');
+            this.camera.position.x = this.positions.person.x;
+            this.camera.position.y = this.positions.person.y;
+            this.camera.position.z = this.positions.person.z;
 
+            this.changeOrbit('Earth');
             // const moonDirection = this.camera.position.clone().sub(moon.position).normalize();
             // this.camera.position.add(moonDirection.clone().multiplyScalar(-367.5));
 
@@ -196,18 +187,18 @@ export default {
             const newFocusPosition = {};
 
             if (newAnchor === 'Person') {
-                newFocusPosition.x = this.positions.person.relative.x;
-                newFocusPosition.y = this.positions.person.relative.y;
-                newFocusPosition.z = this.positions.person.relative.z;
+                newFocusPosition.x = this.positions.person.x;
+                newFocusPosition.y = this.positions.person.y;
+                newFocusPosition.z = this.positions.person.z;
             }
             else if (newAnchor === 'Earth') {
                 newFocusPosition.x = 0;
                 newFocusPosition.y = 0;
                 newFocusPosition.z = 0;
             } else {
-                newFocusPosition.x = this.positions.moon.x / 1000;
-                newFocusPosition.y = this.positions.moon.y / 1000;
-                newFocusPosition.z = this.positions.moon.z / 1000;
+                newFocusPosition.x = this.positions.moon.x;
+                newFocusPosition.y = this.positions.moon.y;
+                newFocusPosition.z = this.positions.moon.z;
             }
 
             const newWorldBox = new THREE.Box3().setFromCenterAndSize(

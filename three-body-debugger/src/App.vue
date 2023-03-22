@@ -54,7 +54,6 @@ export default {
                     shininess: 0
                 })
             );
-            // this.earth.rotateX(Math.PI / 2);
 
             this.moon = new THREE.Mesh(
                 new THREE.SphereGeometry(1.737, 30, 30),
@@ -103,17 +102,17 @@ export default {
             // );
             // this.earth.applyMatrix4(earthMatrix);
 
-            this.light.position.x = positions.sun.x / 1000;
-            this.light.position.y = positions.sun.y / 1000;
-            this.light.position.z = positions.sun.z / 1000;
+            this.light.position.x = positions.sun.x;
+            this.light.position.y = positions.sun.y;
+            this.light.position.z = positions.sun.z;
 
-            this.sun.position.x = positions.sun.x / 1000;
-            this.sun.position.y = positions.sun.y / 1000;
-            this.sun.position.z = positions.sun.z / 1000;
+            this.sun.position.x = positions.sun.x;
+            this.sun.position.y = positions.sun.y;
+            this.sun.position.z = positions.sun.z;
 
-            this.moon.position.x = positions.moon.x / 1000;
-            this.moon.position.y = positions.moon.y / 1000;
-            this.moon.position.z = positions.moon.z / 1000;
+            this.moon.position.x = positions.moon.x;
+            this.moon.position.y = positions.moon.y;
+            this.moon.position.z = positions.moon.z;
         },
     },
     mounted() {

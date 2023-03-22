@@ -97,6 +97,20 @@ app.post('/upload', upload.single('image'), async (req, res) => {
 
 app.use('/image', express.static('images/processed'));
 
+const adjustForModel = (positions) => {
+    // -------swap-------
+    // x, y, z = x, z, -y
+    const temp = -1 * positions.y;
+    positions.y = positions.z;
+    positions.z = temp;
+
+    // ------scale------
+    positions.x /= 1000;
+    positions.y /= 1000;
+    positions.z /= 1000;
+
+    return positions;
+};
 // Endpoint to get positions of the earth and sun relative to the moon
 // given a time stamp (expected in UTC)
 app.get('/positions', async (req, res) => {
@@ -107,7 +121,7 @@ app.get('/positions', async (req, res) => {
             `http://${ config.dataServer.ip }:${ config.dataServer.port }/target-rotation/moon/earth/${ timeStamp }`
         );
         const personPositionSearch = await axios.get(
-            `http://${ config.dataServer.ip }:${ config.dataServer.port }/lat-to-rect/earth/earth/${ -1 * longitude }/${ latitude }/${ timeStamp }`
+            `http://${ config.dataServer.ip }:${ config.dataServer.port }/lat-to-rect/earth/earth/${ longitude }/${ latitude }/${ timeStamp }`
         );
         const moonPositionSearch = await axios.get(
             `http://${ config.dataServer.ip }:${ config.dataServer.port }/planet-vector-search/earth/moon/${ timeStamp }`
@@ -121,12 +135,12 @@ app.get('/positions', async (req, res) => {
 
         res.status(200).json({
             "earth": earthRotationSearch.data,
-            "person": personPositionSearch.data.positions.earth,
+            "person": adjustForModel(personPositionSearch.data.positions.earth),
             "moon": {
-                ...moonPositionSearch.data.positions.moon,
+                ...adjustForModel(moonPositionSearch.data.positions.moon),
                 ...moonRotationSearch.data
             },
-            "sun": sunPositionSearch.data.positions.sun
+            "sun": adjustForModel(sunPositionSearch.data.positions.sun)
         });
     } catch(error) {
         // If there's any errors, respond with an error message and the actual
