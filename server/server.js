@@ -97,7 +97,7 @@ app.post('/upload', upload.single('image'), async (req, res) => {
 
 app.use('/image', express.static('images/processed'));
 
-const adjustForModel = (positions) => {
+const adjustPositionsForModel = (positions) => {
     // -------swap-------
     // x, y, z = x, z, -y
     const temp = -1 * positions.y;
@@ -111,36 +111,41 @@ const adjustForModel = (positions) => {
 
     return positions;
 };
+const adjustRotationsForModel = (rotations) => {
+    // -------swap-------
+    // x, y, z = x, z, -y
+    const temp = -1 * rotations.rotation_axis[1];
+    rotations.rotation_axis[1] = rotations.rotation_axis[2];
+    rotations.rotation_axis[2] = temp;
+
+    return rotations;
+};
 // Endpoint to get positions of the earth and sun relative to the moon
 // given a time stamp (expected in UTC)
 app.get('/positions', async (req, res) => {
     try {
         const { latitude, longitude, timeStamp } = req.query;
 
-        const earthRotationSearch = await axios.get(
-            `http://${ config.dataServer.ip }:${ config.dataServer.port }/target-rotation/moon/earth/${ timeStamp }`
-        );
         const personPositionSearch = await axios.get(
             `http://${ config.dataServer.ip }:${ config.dataServer.port }/lat-to-rect/earth/earth/${ longitude }/${ latitude }/${ timeStamp }`
+        );
+        const sunPositionSearch = await axios.get(
+            `http://${ config.dataServer.ip }:${ config.dataServer.port }/planet-vector-search/earth/sun/${ timeStamp }`
         );
         const moonPositionSearch = await axios.get(
             `http://${ config.dataServer.ip }:${ config.dataServer.port }/planet-vector-search/earth/moon/${ timeStamp }`
         );
         const moonRotationSearch = await axios.get(
-            `http://${ config.dataServer.ip }:${ config.dataServer.port }/target-rotation/earth/moon/${ timeStamp }`
-        );
-        const sunPositionSearch = await axios.get(
-            `http://${ config.dataServer.ip }:${ config.dataServer.port }/planet-vector-search/earth/sun/${ timeStamp }`
+            `http://${ config.dataServer.ip }:${ config.dataServer.port }/target-rotation/sun/moon/${ timeStamp }`
         );
 
         res.status(200).json({
-            "earth": earthRotationSearch.data,
-            "person": adjustForModel(personPositionSearch.data.positions.earth),
+            "person": adjustPositionsForModel(personPositionSearch.data.positions.earth),
+            "sun": adjustPositionsForModel(sunPositionSearch.data.positions.sun),
             "moon": {
-                ...adjustForModel(moonPositionSearch.data.positions.moon),
-                ...moonRotationSearch.data
+                ...adjustPositionsForModel(moonPositionSearch.data.positions.moon),
+                ...adjustRotationsForModel(moonRotationSearch.data)
             },
-            "sun": adjustForModel(sunPositionSearch.data.positions.sun)
         });
     } catch(error) {
         // If there's any errors, respond with an error message and the actual

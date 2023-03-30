@@ -5,9 +5,6 @@ import { useCookies } from 'vue3-cookies';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { Buffer } from 'buffer';
 
-// THREE.Object3D.DEFAULT_UP.set(0, 1, 0);
-// THREE.Object3D.DEFAULT_UP.set(0, -1, 1);
-
 export default {
     name: 'ModelPage',
     setup() {
@@ -83,8 +80,6 @@ export default {
             this.orbit = new OrbitControls(this.camera, this.renderer.domElement);
             this.earthTexture = new THREE.TextureLoader().load(require('../assets/mesh/earth.jpg'));
             this.moonTexture = new THREE.TextureLoader().load(require('../assets/mesh/moon-4k.jpg'));
-
-            // this.camera.up = new THREE.Vector3(0, 0, 1);
         },
         renderScene() {
             this.renderer.setSize(window.innerWidth * .95, window.innerHeight * .8);
@@ -98,19 +93,6 @@ export default {
                     shininess: 0
                 })
             );
-            earth.position.x = 0;
-            earth.position.y = 0;
-            earth.position.z = 0;
-            // const earthMatrix = new THREE.Matrix4;
-            // earthMatrix.makeRotationAxis(
-            //     new THREE.Vector3(
-            //         this.positions.earth.rotation_axis[0],
-            //         this.positions.earth.rotation_axis[1],
-            //         this.positions.earth.rotation_axis[2]
-            //     ),
-            //     this.positions.earth.rotation_angle * Math.PI / 180
-            // );
-            // earth.applyMatrix4(earthMatrix);
             this.scene.add(earth);
 
             const person = new THREE.Mesh(
@@ -119,9 +101,11 @@ export default {
                     color: 0xe62117
                 })
             );
-            person.position.x = this.positions.person.x;
-            person.position.y = this.positions.person.y;
-            person.position.z = this.positions.person.z;
+            person.position.set(
+                this.positions.person.x,
+                this.positions.person.y,
+                this.positions.person.z
+            );
             this.scene.add(person);
 
             const moon = new THREE.Mesh(
@@ -131,37 +115,36 @@ export default {
                     shininess: 0
                 })
             );
+            const moonMatrix = new THREE.Matrix4;
+            moonMatrix.makeRotationAxis(
+                new THREE.Vector3(
+                    this.positions.moon.rotation_axis[0],
+                    this.positions.moon.rotation_axis[1],
+                    this.positions.moon.rotation_axis[2]
+                ),
+                this.positions.moon.rotation_angle * Math.PI / 180
+            );
+            moon.applyMatrix4(moonMatrix);
             moon.position.set(
                 this.positions.moon.x,
                 this.positions.moon.y,
                 this.positions.moon.z
             );
-            // const moonMatrix = new THREE.Matrix4;
-            // moonMatrix.setPosition(
-            //     this.positions.moon.x,
-            //     this.positions.moon.y,
-            //     this.positions.moon.z
-            // );
-            // moonMatrix.makeRotationAxis(
-            //     new THREE.Vector3(
-            //         this.positions.moon.rotation_axis[0],
-            //         this.positions.moon.rotation_axis[2],
-            //         this.positions.moon.rotation_axis[1]
-            //     ),
-            //     this.positions.moon.rotation_angle * Math.PI / 180
-            // );
-            // moon.applyMatrix4(moonMatrix);
             this.scene.add(moon);
 
             const light = new THREE.PointLight(0xffffff, 2.5, 1000000);
-            light.position.x = this.positions.sun.x;
-            light.position.y = this.positions.sun.y;
-            light.position.z = this.positions.sun.z;
+            light.position.set(
+                this.positions.sun.x,
+                this.positions.sun.y,
+                this.positions.sun.z
+            );
             this.scene.add(light);
 
-            this.camera.position.x = this.positions.person.x;
-            this.camera.position.y = this.positions.person.y;
-            this.camera.position.z = this.positions.person.z;
+            this.camera.position.set(
+                this.positions.person.x,
+                this.positions.person.y,
+                this.positions.person.z
+            );
 
             this.changeOrbit('Earth');
             // const moonDirection = this.camera.position.clone().sub(moon.position).normalize();

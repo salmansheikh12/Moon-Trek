@@ -4,13 +4,15 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { ZonedDateTime, ZoneId } from '@js-joda/core';
 import '@js-joda/timezone';
-import * as imgUrl from './assets/earth.jpg';
+import * as earthTexture from './assets/earth.jpg';
+import * as moonTexture from './assets/moon.jpg';
 
 export default {
     data() {
         return {
             view: 'model',
-            incrementValue: 4,
+            cameraAnchor: 'earth',
+            incrementValue: 1,
             incrementType: 'hours',
             timeStamp: new ZonedDateTime.now(ZoneId.of('UTC')),
             positionsLog: [],
@@ -25,13 +27,6 @@ export default {
             this.scene = new THREE.Scene();
             this.camera = new THREE.PerspectiveCamera(45, renderWidth / renderHeight, 0.1, 10000000000000000000000);
             this.orbit = new OrbitControls(this.camera, this.renderer.domElement);
-
-            this.camera.position.set(
-                10,
-                0,
-                0
-            );
-            this.orbit.update();
 
             this.renderer.setSize(renderWidth, renderHeight);
             this.$refs.modelCanvas.appendChild(this.renderer.domElement);
@@ -50,21 +45,63 @@ export default {
             this.earth = new THREE.Mesh(
                 new THREE.SphereGeometry(6.371, 30, 30),
                 new THREE.MeshPhongMaterial({
-                    map: new THREE.TextureLoader().load(imgUrl.default),
+                    map: new THREE.TextureLoader().load(earthTexture.default),
                     shininess: 0
                 })
             );
 
             this.moon = new THREE.Mesh(
                 new THREE.SphereGeometry(1.737, 30, 30),
-                new THREE.MeshBasicMaterial({
-                    color: 0xCCCCCC
+                new THREE.MeshPhongMaterial({
+                    map: new THREE.TextureLoader().load(moonTexture.default),
+                    shininess: 0
                 })
+            );
+
+            this.camera.position.set(
+                20,
+                0,
+                0
             );
 
             this.scene.add(this.sun);
             this.scene.add(this.earth);
             this.scene.add(this.moon);
+        },
+        changeOrbit(positions) {
+            const newFocusPosition = {};
+            const relativeCameraPosition = {};
+
+            if (this.cameraAnchor === 'earth') {
+                newFocusPosition.x = 0;
+                newFocusPosition.y = 0;
+                newFocusPosition.z = 0;
+
+                relativeCameraPosition.x = this.camera.position.x;
+                relativeCameraPosition.y = this.camera.position.y;
+                relativeCameraPosition.z = this.camera.position.z;
+            } else {
+                newFocusPosition.x = positions.moon.x;
+                newFocusPosition.y = positions.moon.y;
+                newFocusPosition.z = positions.moon.z;
+
+                relativeCameraPosition.x = this.camera.position.x + (positions.moon.x - this.moon.position.x);
+                relativeCameraPosition.y = this.camera.position.y + (positions.moon.y - this.moon.position.y);
+                relativeCameraPosition.z = this.camera.position.z + (positions.moon.z - this.moon.position.z);
+            }
+
+            const newWorldBox = new THREE.Box3().setFromCenterAndSize(
+                new THREE.Vector3(newFocusPosition.x, newFocusPosition.y, newFocusPosition.z),
+                new THREE.Vector3(.1, .1, .1),
+            );
+            newWorldBox.getCenter(this.orbit.target);
+
+            this.camera.position.set(
+                relativeCameraPosition.x,
+                relativeCameraPosition.y,
+                relativeCameraPosition.z
+            );
+            this.orbit.update();
         },
         async updatePositions() {
             let incrementAmount = this.incrementValue;
@@ -91,29 +128,35 @@ export default {
             const positions = response.data;
             this.positionsLog.push([timeStampStr, positions]);
 
-            // const earthMatrix = new THREE.Matrix4;
-            // earthMatrix.makeRotationAxis(
-            //     new THREE.Vector3(
-            //         positions.earth.rotation_axis[0],
-            //         positions.earth.rotation_axis[1],
-            //         positions.earth.rotation_axis[2]
-            //     ),
-            //     positions.earth.rotation_angle * Math.PI / 180
-            // );
-            // this.earth.applyMatrix4(earthMatrix);
+            this.changeOrbit(positions);
 
-            this.light.position.x = positions.sun.x;
-            this.light.position.y = positions.sun.y;
-            this.light.position.z = positions.sun.z;
+            this.light.position.set(
+                positions.sun.x,
+                positions.sun.y,
+                positions.sun.z
+            );
+            this.sun.position.set(
+                positions.sun.x,
+                positions.sun.y,
+                positions.sun.z
+            );
 
-            this.sun.position.x = positions.sun.x;
-            this.sun.position.y = positions.sun.y;
-            this.sun.position.z = positions.sun.z;
-
-            this.moon.position.x = positions.moon.x;
-            this.moon.position.y = positions.moon.y;
-            this.moon.position.z = positions.moon.z;
-        },
+            const moonMatrix = new THREE.Matrix4;
+            moonMatrix.makeRotationAxis(
+                new THREE.Vector3(
+                    positions.moon.rotation_axis[0],
+                    positions.moon.rotation_axis[1],
+                    positions.moon.rotation_axis[2]
+                ),
+                positions.moon.rotation_angle * Math.PI / 180
+            );
+            this.moon.applyMatrix4(moonMatrix);
+            this.moon.position.set(
+                positions.moon.x,
+                positions.moon.y,
+                positions.moon.z
+            );
+        }
     },
     mounted() {
         this.initialize();
@@ -146,6 +189,12 @@ export default {
             <select id="incrementTypeSelect" v-model="incrementType" @change="positionsLog = []">
                 <option value="hours" selected>Hours</option>
                 <option value="days">Days</option>
+            </select>
+        </div>
+        <div class="column select is-narrow">
+            <select id="viewSelect" v-model="cameraAnchor">
+                <option value="earth" selected>Earth</option>
+                <option value="moon">Moon</option>
             </select>
         </div>
     </div>
