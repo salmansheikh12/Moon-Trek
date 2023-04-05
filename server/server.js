@@ -136,7 +136,7 @@ app.get('/positions', async (req, res) => {
             `http://${ config.dataServer.ip }:${ config.dataServer.port }/planet-vector-search/earth/moon/${ timeStamp }`
         );
         const moonRotationSearch = await axios.get(
-            `http://${ config.dataServer.ip }:${ config.dataServer.port }/target-rotation/sun/moon/${ timeStamp }`
+            `http://${ config.dataServer.ip }:${ config.dataServer.port }/target-rotation/earth/moon/${ timeStamp }`
         );
 
         res.status(200).json({

@@ -64,6 +64,10 @@ export default {
                 0
             );
 
+            const ambientLight = new THREE.AmbientLight(0x404040);
+            this.earth.add(ambientLight);
+            this.moon.add(ambientLight);
+
             this.scene.add(this.sun);
             this.scene.add(this.earth);
             this.scene.add(this.moon);
