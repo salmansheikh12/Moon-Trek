@@ -14,6 +14,7 @@ import HomePage from './routes/HomePage.vue'
 import UploadPage from './routes/UploadPage.vue'
 import ConnectPage from './routes/ConnectPage.vue'
 import ModelPage from './routes/ModelPage.vue'
+import AboutPage from './routes/AboutPage.vue'
 
 // Import vue router for having multiple routes (or "pages")
 const VueRouter = require('vue-router')
@@ -35,6 +36,10 @@ const routes = [
     {
         path: '/model',
         component: ModelPage
+    },
+    {
+        path: '/about',
+        component: AboutPage
     }
 ]
 
